@@ -39,3 +39,7 @@ tasks
 
 // runs "grunt release" as part of your gradle build
 build.dependsOn grunt_release
+
+// Also remove files built by grunt when running clean
+clean.dependsOn grunt_clean
+
