@@ -1,0 +1,121 @@
+buildscript {
+    ext {
+        springBootVersion = '1.1.8.RELEASE'
+        osPackagePluginVersion = '2.0.3'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("com.netflix.nebula:gradle-ospackage-plugin:${osPackagePluginVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'rpm'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+def unpackedClientResourcesDir = file("${buildDir}/copied-client-resources/main")
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven {
+        url 'http://clojars.org/repo'
+    }
+}
+
+sourceSets {
+    main {
+        output.dir(unpackedClientResourcesDir, builtBy: 'unpackClientResources')
+    }
+}
+
+configurations {
+    clientResources
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-aop")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-remote-shell")
+    compile('redis.embedded:embedded-redis:0.3')
+    compile('redis.clients:jedis:2.6.0')
+    compile('com.google.guava:guava-io:r03')
+    compile('commons-io:commons-io:2.4')
+
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+
+    clientResources project(':client')
+    clientResources("${group}:client:${version}@zip")
+}
+
+jar {
+    baseName = 'server'
+}
+
+task unpackClientResources(type: Copy) {
+    configurations.clientResources.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            if (artifact.file.name.endsWith('.zip')) {
+                from zipTree(artifact.file)
+                into unpackedClientResourcesDir
+            }
+    }
+}
+
+task packageRpm(type: Rpm, dependsOn: bootRepackage) {
+    packageName = 'office-account-manager'
+    version = '0.1.0'
+    release = '1'
+    user = 'office-account-manager'
+    permissionGroup = 'office-account-manager'
+    summary = 'A service for managing Office accounts via a web interface'
+    packageDescription = 'Create, update, delete and list/search Office accounts via a convenient web interface'
+    arch = NOARCH
+    os = LINUX
+    distribution = 'el6'
+    packager = 'Olaf Bergner <olaf.bergner@gmx.de>'
+    vendor = 'Olaf Bergner <olaf.bergner@gmx.de>'
+
+    preInstall file('src/main/rpm/scriptlets/pre-install.sh')
+    postInstall file('src/main/rpm/scriptlets/post-install.sh')
+    preUninstall file('src/main/rpm/scriptlets/pre-uninstall.sh')
+    postUninstall file('src/main/rpm/scriptlets/post-uninstall.sh')
+
+    into "/usr/share/${packageName}"
+
+    from(jar.outputs.files) {
+        into 'lib'
+        fileMode 0444
+    }
+    from('src/main/rpm/initd') {
+        into '/etc/init.d'
+        user 'root'
+        permissionGroup 'root'
+        fileMode 0755
+    }
+    from('src/main/rpm/etc') {
+        into "/etc/${packageName}"
+        fileType CONFIG | NOREPLACE
+        user 'root'
+        permissionGroup 'root'
+        fileMode 0644
+    }
+    from('src/main/rpm/sysconfig') {
+        into '/etc/sysconfig'
+        fileType CONFIG | NOREPLACE
+        createDirectoryEntry false
+        addParentDirs false
+        user 'root'
+        permissionGroup 'root'
+        fileMode 0644
+    }
+    directory("/var/log/${packageName}", 0755)
+}
+

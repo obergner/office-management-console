@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.moowork.gradle:gradle-grunt-plugin:0.6"
+    }
+}
+
+apply plugin: 'com.moowork.grunt'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+task zipDist(type: Zip, dependsOn: grunt_default) {
+    destinationDir file("${buildDir}/distributions")
+    archiveName 'office-management-client.zip'
+    from ('dist/')
+    into 'static' // note that this specifies path *in* the archive
+}
+
+artifacts {
+    archives zipDist
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+    <head>
+        <link rel="stylesheet" type="text/css" href="/css/<%= grunt.config.get('pkg.name') %>.css"/>
+        <script type="text/javascript" src="/js/jquery.js"></script>
+        <script type="text/javascript" src="/js/angular.js"></script>
+        <script type="text/javascript" src="/js/angular-ui.js"></script>
+        <script type="text/javascript" src="/js/angular-growl-notifications.js"></script>
+        <script type="text/javascript" src="/js/<%= grunt.config.get('pkg.name') %>.js"></script>
+    </head>
+
+    <body ng-controller="AppCtrl">
+        <growl-notifications></growl-notifications>
+        <div ng-include="'header.tpl.html'"></div>
+        <growl-notification class="fading" ng-if="notifications.getCurrent().length">
+        <div ng-include="'notifications.tpl.html'"></div>
+        </growl-notification>
+        <div data-ui-view class="container-fluid"></div>
+    </body>
+</html>

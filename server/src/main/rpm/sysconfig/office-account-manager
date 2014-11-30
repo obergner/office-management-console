@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Run mode: production, development
+#RUN_MODE="development"
+
+# Java options
+#JAVA_OPTS="-Xms128m -Xmx512m"
+

@@ -1,0 +1,68 @@
+// Custom app-specific styling
+// ------------------------------------
+
+// Needed by Angular UI to play nicely
+// with Bootstrap
+// ------------------------------------
+
+.nav, .pagination, .carousel, .panel-title a { 
+    cursor: pointer; 
+}
+
+// Body needs to have padding-top since
+// otherwise our fixed position header
+// navigation bar will hide some of its
+// contents.
+// ------------------------------------
+
+body {
+    padding-top: 150px;
+}
+
+// A box that will stay in place regardless
+// of scrolling. Meant to contain controls
+// that should always be accessible.
+// -------------------------------------
+.fixed-box-left {
+    position: fixed;
+    display: inline-block;
+    top: 0;
+    left: 0;
+    height: 250px;
+    padding-top: 150px;
+    padding-left: 30px;
+}
+
+// Configure growl-notifications for AngularJS
+// See: http://jvandemo.github.io/angular-growl-notifications/
+// --------------------------------------
+growl-notifications{
+    position: fixed;
+    top: 150px;
+    right: 10px;
+    z-index: 100;
+}
+growl-notification{
+    padding: 15px 30px;
+    margin-bottom: 15px;
+}
+
+growl-notification.fading.ng-move{
+    opacity: 0;
+    -webkit-transition: 2s linear all; /* Safari/Chrome */
+    transition: 2s linear all; /* All other modern browsers and IE10+ */
+}
+
+growl-notification.fading.ng-move.ng-move-active {
+    opacity: 1;
+}
+growl-notification.fading.ng-leave {
+    opacity: 1;
+    -webkit-transition: 2s linear all; /* Safari/Chrome */
+    transition: 2s linear all; /* All other modern browsers and IE10+ */
+}
+
+growl-notification.fading.ng-leave.ng-leave-active {
+    opacity: 0;
+}
+
