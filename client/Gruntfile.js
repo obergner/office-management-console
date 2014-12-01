@@ -7,14 +7,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-html2js');
 
     // Default task.
     grunt.registerTask('default', ['jshint','build','karma:unit']);
     grunt.registerTask('build', ['clean','html2js','concat','less:build','copy']);
-    grunt.registerTask('release', ['clean','html2js','uglify','jshint','karma:unit','concat:index', 'less:min','copy', 'compress']);
+    grunt.registerTask('release', ['clean','html2js','uglify','jshint','karma:unit','concat:index', 'less:min','copy']);
     grunt.registerTask('test-watch', ['karma:watch']);
 
     // Print a timestamp (useful for when watching)
@@ -152,18 +151,7 @@ module.exports = function (grunt) {
                     compress: true,
                 },
                 src: ['<%= src.less %>'],
-                dest: '<%= distdir %>/js/<%= pkg.name %>.css'
-            }
-        },
-        compress: {
-            main: {
-                options: {
-                    archive: '<%= distdir %>/<%= pkg.name %>.zip'
-                },
-                expand: true,
-                cwd: 'dist/',
-                src: ['**/*'],
-                dest: 'static/'
+                dest: '<%= distdir %>/css/<%= pkg.name %>.css'
             }
         },
         watch:{

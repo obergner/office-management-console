@@ -35,6 +35,7 @@ tasks
         task.inputs.dir angularVendorDir
         task.outputs.dir gruntOutputDir
         task.dependsOn 'installGrunt'
+        task.dependsOn 'npmInstall'
     }
 
 // runs "grunt release" as part of your gradle build
