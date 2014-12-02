@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="/css/<%= grunt.config.get('pkg.name') %>.css"/>
-        <script type="text/javascript" src="/js/jquery.js"></script>
-        <script type="text/javascript" src="/js/angular.js"></script>
-        <script type="text/javascript" src="/js/angular-ui.js"></script>
-        <script type="text/javascript" src="/js/angular-growl-notifications.js"></script>
-        <script type="text/javascript" src="/js/<%= grunt.config.get('pkg.name') %>.js"></script>
     </head>
 
     <body ng-controller="AppCtrl">
@@ -15,6 +13,11 @@
         <growl-notification class="fading" ng-if="notifications.getCurrent().length">
         <div ng-include="'notifications.tpl.html'"></div>
         </growl-notification>
-        <div data-ui-view class="container-fluid"></div>
+        <div data-ui-view></div>
+        <script type="text/javascript" src="/js/jquery.js"></script>
+        <script type="text/javascript" src="/js/angular.js"></script>
+        <script type="text/javascript" src="/js/angular-ui.js"></script>
+        <script type="text/javascript" src="/js/angular-growl-notifications.js"></script>
+        <script type="text/javascript" src="/js/<%= grunt.config.get('pkg.name') %>.js"></script>
     </body>
 </html>

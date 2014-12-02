@@ -53,7 +53,7 @@ angular.module('accounts', [
                 size: 'lg',
                 resolve: {
                     accountToUpdate: ['Account', function (Account) {
-                        return Account.get({uuid: $stateParams['uuid']});
+                        return Account.get({uuid: $stateParams.uuid});
                     }]
                 },
                 controller: 'UpdateAccountCtrl'
@@ -72,7 +72,7 @@ angular.module('accounts', [
                 size: 'lg',
                 resolve: {
                     accountToDelete: ['Account', function (Account) {
-                        return Account.get({uuid: $stateParams['uuid']});
+                        return Account.get({uuid: $stateParams.uuid});
                     }]
                 },
                 controller: 'DeleteAccountCtrl'

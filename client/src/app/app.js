@@ -1,6 +1,5 @@
 angular.module('app', [
     'ngSanitize',
-    'ngRoute',
     'ngResource',
     'ngAnimate',
     'ui.bootstrap',
@@ -17,7 +16,7 @@ angular.module('app', [
 
 //TODO: move those messages to a separate module
 angular.module('app').constant('I18N.MESSAGES', {
-    'errors.route.changeError':'Route change error',
+    'errors.route.changeError':'Route change error: {{rejection}}',
     'crud.account.create.success':"Account '{{account.uuid}} | {{account.name}}' successfully created.",
     'crud.account.create.error':"Failed to create account '{{account.name}}: ",
     'crud.account.update.success':"Account '{{account.uuid}} | {{account.name}}' successfully updated.",
@@ -33,8 +32,7 @@ angular.module('app').constant('BACKEND', {
     'host': 'http://localhost:8080'
 });
 
-angular.module('app').config(['$urlRouterProvider', '$locationProvider', 'uiSelectConfig', function ($urlRouterProvider, $locationProvider, uiSelectConfig) {
-    $locationProvider.html5Mode(true);
+angular.module('app').config(['$urlRouterProvider', 'uiSelectConfig', function ($urlRouterProvider, uiSelectConfig) {
     $urlRouterProvider.otherwise('/accounts');
     uiSelectConfig.theme = 'bootstrap';
 }]);
@@ -47,21 +45,24 @@ angular.module('app').controller('AppCtrl', ['$scope', 'i18nNotifications', 'loc
         i18nNotifications.remove(notification);
     };
 
-    $scope.$on('$routeChangeError', function(event, current, previous, rejection){
-        i18nNotifications.pushForCurrentRoute('errors.route.changeError', 'error', {}, {rejection: rejection});
+    $scope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error){
+        i18nNotifications.pushForCurrentRoute('errors.route.changeError', 'error', {}, {rejection: error});
+    });
+
+    $scope.$on('$stateNotFound', function(event, unfoundState, fromState, fromParams) { 
+        console.log('Wanted to change from state ' + angular.toJson(fromState) + ' to ' + angular.toJson(unfoundState) + ' but could not find it');
+    });
+
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        console.log('Successfully changed from ' + angular.toJson(fromState) + ' to ' + angular.toJson(toState));
     });
 }]);
 
-angular.module('app').controller('HeaderCtrl', ['$scope', '$location', 'notifications', 'httpRequestTracker',
-    function ($scope, $location, notifications, httpRequestTracker) {
-        $scope.location = $location;
+angular.module('app').controller('HeaderCtrl', ['$scope', '$state', 'notifications', 'httpRequestTracker',
+    function ($scope, $state, notifications, httpRequestTracker) {
 
-        $scope.home = function () {
-            $location.path('/accounts');
-        };
-
-        $scope.isNavbarActive = function (navBarPath) {
-            return $location.path().indexOf(navBarPath) === 1;
+        $scope.isNavbarActive = function (navBarState) {
+            return $state.current.name === navBarState;
         };
 
         $scope.hasPendingRequests = function () {
