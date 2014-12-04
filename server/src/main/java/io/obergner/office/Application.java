@@ -1,7 +1,6 @@
 package io.obergner.office;
 
 import io.obergner.office.accounts.AccountManagementConfiguration;
-import io.obergner.office.web.WebConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.MessageSource;
@@ -15,7 +14,7 @@ import javax.validation.Validator;
 
 @Configuration
 @EnableAutoConfiguration
-@Import({AccountManagementConfiguration.class, WebConfiguration.class})
+@Import({AccountManagementConfiguration.class})
 public class Application {
 
     @Bean

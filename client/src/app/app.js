@@ -27,10 +27,6 @@ angular.module('app').constant('I18N.MESSAGES', {
     'crud.configuration.save.error':"Something went wrong when saving a configuration..."
 });
 
-angular.module('app').constant('BACKEND', {
-    'host': 'http://localhost:8080'
-});
-
 angular.module('app').config(['$urlRouterProvider', 'uiSelectConfig', 'growlProvider', function ($urlRouterProvider, uiSelectConfig, growlProvider) {
     $urlRouterProvider.otherwise('/accounts');
     uiSelectConfig.theme = 'bootstrap';

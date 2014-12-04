@@ -1,7 +1,6 @@
 describe('resource: Account', function () {
     var $httpBackend;
     var $rootScope;
-    var backendSettings;
     var Account;
 
     var allAccounts = [
@@ -27,17 +26,17 @@ describe('resource: Account', function () {
     });
 
     beforeEach(module('app'));
+
     beforeEach(module('resources.account'));
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
         $rootScope = $injector.get('$rootScope');
-        backendSettings = $injector.get('BACKEND');
         Account = $injector.get('Account');
     }));
 
     it('should return an array of all accounts in response to query()', function () {
-        $httpBackend.expect('GET', backendSettings.host + '/accounts').respond(200, allAccounts);
+        $httpBackend.expect('GET', '/accounts').respond(200, allAccounts);
         var accounts = Account.query();
         $httpBackend.flush();
         expect(accounts).toEqualData(allAccounts);
@@ -49,7 +48,7 @@ describe('resource: Account', function () {
         accountToUpdate.name = 'Account to update';
         accountToUpdate.mmaId = 123345666;
 
-        $httpBackend.expect('PUT', backendSettings.host + '/accounts/uuid/' + accountToUpdate.uuid).respond(200);
+        $httpBackend.expect('PUT', '/accounts/uuid/' + accountToUpdate.uuid).respond(200);
         accountToUpdate.$update();
         $httpBackend.flush();
     });
@@ -64,7 +63,7 @@ describe('resource: Account', function () {
         createdAccount.name = accountToCreate.name;
         createdAccount.mmaId = accountToCreate.mmaId;
 
-        $httpBackend.expect('POST', backendSettings.host + '/accounts').respond(201, angular.toJson(createdAccount));
+        $httpBackend.expect('POST', '/accounts').respond(201, angular.toJson(createdAccount));
         accountToCreate.$save();
         $httpBackend.flush();
     });
@@ -76,7 +75,7 @@ describe('resource: Account', function () {
         accountToReturn.name = 'Account to return';
         accountToReturn.mmaId = 334456666;
 
-        $httpBackend.expect('GET', backendSettings.host + '/accounts/uuid/' + accountUuid).respond(200, angular.toJson(accountToReturn));
+        $httpBackend.expect('GET', '/accounts/uuid/' + accountUuid).respond(200, angular.toJson(accountToReturn));
         var returnedAccount = Account.get({uuid: accountUuid});
         $httpBackend.flush();
     });

@@ -1,16 +1,16 @@
 angular.module('resources.account', ['ngResource'])
 
-.factory('Account', ['$resource', 'BACKEND', function($resource, backend){
+.factory('Account', ['$resource', function($resource){
 
-    return $resource(backend.host + '/accounts/uuid/:uuid', { uuid: '@uuid' } , {
+    return $resource('/accounts/uuid/:uuid', { uuid: '@uuid' } , {
         query: {
             method: 'GET',
-            url: backend.host + '/accounts',
+            url: '/accounts',
             isArray: true
         },
         save: {
             method: 'POST',
-            url: backend.host + '/accounts'
+            url: '/accounts'
         },
         update: {
             method: 'PUT',
