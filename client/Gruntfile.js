@@ -103,9 +103,9 @@ module.exports = function (grunt) {
                 src:['vendor/angular-ui/**/*.js'],
                 dest: '<%= distdir %>/js/angular-ui.js'
             },
-            angularGrowlNotifications: {
-                src:['vendor/angular-growl-notifications/**/*.js'],
-                dest: '<%= distdir %>/js/angular-growl-notifications.js'
+            angularGrowl2: {
+                src:['vendor/angular-growl-2/**/*.js'],
+                dest: '<%= distdir %>/js/angular-growl-2.js'
             },
             jquery: {
                 src:['vendor/jquery/*.js'],
@@ -128,9 +128,9 @@ module.exports = function (grunt) {
                 src:['<%= concat.angularUi.src %>'],
                 dest: '<%= distdir %>/js/angular-ui.js'
             },
-            angularGrowlNotifications: {
-                src:['<%= concat.angularGrowlNotifications.src %>'],
-                dest: '<%= distdir %>/js/angular-growl-notifications.js'
+            angularGrowl2: {
+                src:['<%= concat.angularGrowl2.src %>'],
+                dest: '<%= distdir %>/js/angular-growl-2.js'
             },
             jquery: {
                 src:['vendor/jquery/*.js'],

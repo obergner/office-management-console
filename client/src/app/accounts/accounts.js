@@ -1,9 +1,8 @@
 angular.module('accounts', [
-    'services.i18nNotifications',
+    'services.localizedMessages',
     'services.apiErrorHandler',
     'resources.account',
-    'ui.router',
-    'ngRoute'
+    'ui.router'
 ])
 
 .constant('AccountSettings', {
@@ -32,6 +31,7 @@ angular.module('accounts', [
             $modal.open({
                 templateUrl: "accounts/account-new.tpl.html",
                 size: 'lg',
+                backdrop: false,
                 resolve: {
                     newAccount: ['Account', function (Account) {
                         return new Account();
@@ -51,6 +51,7 @@ angular.module('accounts', [
             $modal.open({
                 templateUrl: "accounts/account-edit.tpl.html",
                 size: 'lg',
+                backdrop: false,
                 resolve: {
                     accountToUpdate: ['Account', function (Account) {
                         return Account.get({uuid: $stateParams.uuid});
@@ -70,6 +71,7 @@ angular.module('accounts', [
             $modal.open({
                 templateUrl: "accounts/account-delete.tpl.html",
                 size: 'lg',
+                backdrop: false,
                 resolve: {
                     accountToDelete: ['Account', function (Account) {
                         return Account.get({uuid: $stateParams.uuid});
@@ -96,8 +98,8 @@ angular.module('accounts', [
     };
 }])
 
-.controller('CreateAccountCtrl', ['$scope', '$location', '$modalInstance', '$state', 'i18nNotifications', 'apiErrorHandler', 'AccountSettings', 'newAccount', 
-    function ($scope, $location, $modalInstance, $state, i18nNotifications, apiErrorHandler, AccountSettings, newAccount) {
+.controller('CreateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'newAccount', 
+    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, newAccount) {
 
         $scope.newAccount = newAccount;
         $scope.alerts = [];
@@ -112,8 +114,9 @@ angular.module('accounts', [
             $scope.newAccount.$save(
                 function(createdAccount) {
                     $modalInstance.close(createdAccount);
-                    i18nNotifications.pushForCurrentRoute('crud.account.create.success', 'success', {account : createdAccount});
-                    $state.go('accounts', {}, { reload: true });
+                    $state.go('accounts', {}, { reload: true }).then(function() {
+                        growl.success(localizedMessages.get('crud.account.create.success', {account: createdAccount}), {title: 'Account created'});
+                    });
                 },
                 function(httpResponse) {
                     var alert = apiErrorHandler.mapToAlert(httpResponse);
@@ -128,8 +131,8 @@ angular.module('accounts', [
     }
 ])
 
-.controller('UpdateAccountCtrl', ['$scope', '$location', '$modalInstance', '$state', 'i18nNotifications', 'apiErrorHandler', 'AccountSettings', 'accountToUpdate', 
-    function ($scope, $location, $modalInstance, $state, i18nNotifications, apiErrorHandler, AccountSettings, accountToUpdate) {
+.controller('UpdateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToUpdate', 
+    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
 
         $scope.accountToUpdate = accountToUpdate;
         $scope.alerts = [];
@@ -144,8 +147,9 @@ angular.module('accounts', [
             $scope.accountToUpdate.$update(
                 function(updatedAccount) {
                     $modalInstance.close(updatedAccount);
-                    i18nNotifications.pushForCurrentRoute('crud.account.update.success', 'success', {account : updatedAccount});
-                    $state.go('accounts', {}, { reload: true });
+                    $state.go('accounts', {}, { reload: true }).then(function() {
+                        growl.success(localizedMessages.get('crud.account.update.success', {account: updatedAccount}), {title: 'Account updated'});
+                    });
                 },
                 function(httpResponse) {
                     var alert = apiErrorHandler.mapToAlert(httpResponse);
@@ -160,11 +164,12 @@ angular.module('accounts', [
     }
 ])
 
-.controller('DeleteAccountCtrl', ['$scope', '$location', '$modalInstance', '$state', 'i18nNotifications', 'apiErrorHandler', 'accountToDelete', 
-    function ($scope, $location, $modalInstance, $state, i18nNotifications, apiErrorHandler, accountToDelete) {
+.controller('DeleteAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToDelete', 
+    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToDelete) {
 
         $scope.accountToDelete = accountToDelete;
         $scope.alerts = [];
+        $scope.availableOutChannels = AccountSettings.outChannels;
 
         $scope.dismissAlert = function() {
             $scope.alerts.length = 0;
@@ -175,8 +180,9 @@ angular.module('accounts', [
             $scope.accountToDelete.$delete(
                 function() {
                     $modalInstance.close($scope.accountToDelete);
-                    i18nNotifications.pushForCurrentRoute('crud.account.delete.success', 'success', {account : $scope.accountToDelete});
-                    $state.go('accounts', {}, { reload: true });
+                    $state.go('accounts', {}, { reload: true }).then(function() {
+                        growl.success(localizedMessages.get('crud.account.delete.success', {account: $scope.accountToDelete}), {title: 'Account deleted'});
+                    });
                 },
                 function(httpResponse) {
                     var alert = apiErrorHandler.mapToAlert(httpResponse);

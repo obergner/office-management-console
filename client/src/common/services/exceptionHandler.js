@@ -1,27 +1,24 @@
-angular.module('services.exceptionHandler', ['services.i18nNotifications']);
+angular.module('services.exceptionHandler', ['services.localizedMessages', 'angular-growl']);
 
 angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', ['$injector', function($injector) {
-  return function($delegate) {
+    return function($delegate) {
 
-    return function (exception, cause) {
-      // Lazy load notifications to get around circular dependency
-      //Circular dependency: $rootScope <- notifications <- i18nNotifications <- $exceptionHandler
-      var i18nNotifications = $injector.get('i18nNotifications');
+        return function (exception, cause) {
+            // Pass through to original handler
+            $delegate(exception, cause);
 
-      // Pass through to original handler
-      $delegate(exception, cause);
-
-      // Push a notification error
-      i18nNotifications.pushForCurrentRoute('error.fatal', 'error', {}, {
-        exception:exception,
-        cause:cause
-      });
+            // Avoid circular dependency: $exceptionHandler <- $interpolate <- localizedMessages <- exceptionHandlerFactory <- $exceptionHandler
+            var localizedMessages = $injector.get('localizedMessages');
+            // Avoid circular dependency: $exceptionHandler <- $rootScope <- growl <- exceptionHandlerFactory <- $exceptionHandler
+            var growl = $injector.get('growl');
+            // Push a notification error
+            growl.error(localizedMessages.get('error.fatal', { exception: exception, cause: cause }), {title: 'Exception'});
+        };
     };
-  };
 }]);
 
 angular.module('services.exceptionHandler').config(['$provide', function($provide) {
-  $provide.decorator('$exceptionHandler', ['$delegate', 'exceptionHandlerFactory', function ($delegate, exceptionHandlerFactory) {
-    return exceptionHandlerFactory($delegate);
-  }]);
+    $provide.decorator('$exceptionHandler', ['$delegate', 'exceptionHandlerFactory', function ($delegate, exceptionHandlerFactory) {
+        return exceptionHandlerFactory($delegate);
+    }]);
 }]);

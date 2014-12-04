@@ -22,7 +22,7 @@ module.exports = function(config) {
             'vendor/angular/angular-route.js',
             'vendor/angular/angular-resource.js',
             'vendor/angular/angular-animate.js',
-            'vendor/angular-growl-notifications/angular-growl-notifications.js',
+            'vendor/angular-growl-2/angular-growl.js',
             'test/vendor/angular/angular-mocks.js',
             'vendor/angular-ui/**/*.js',
             'src/**/*.js',
