@@ -25,7 +25,7 @@ if newaccountmma ~= oldaccountmma then
     redis.call('hset', KEYS[1], newaccountmma, accountuuid)
 end
 
-redis.call('hmset', accountkey, 'uuid', accountuuid, 'name', newaccountname, 'mma', newaccountmma, 'allowedOutChannels', newaccountallowedoutchannels)
+redis.call('hmset', accountkey, 'uuid', accountuuid, 'name', newaccountname, 'mma', newaccountmma, 'outchannels', newaccountallowedoutchannels)
 
 return redis.status_reply('OK')
 

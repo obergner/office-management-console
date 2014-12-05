@@ -10,7 +10,7 @@ local all_account_keys = redis.call('keys', 'account:uuid:*')
 local data = {}
 
 for idx, key in ipairs(all_account_keys) do
-    data[idx] = redis.call('HMGET', key, 'uuid', 'name', 'mma', 'createdAt', 'allowedOutChannels')
+    data[idx] = redis.call('HMGET', key, 'uuid', 'name', 'mma', 'created_at', 'outchannels')
 end
 
 return data

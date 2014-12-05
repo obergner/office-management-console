@@ -25,8 +25,8 @@ public class AccountSchema {
 
         public static final String MMA_ID = "mma";
 
-        public static final String CREATED_AT = "createdAt";
+        public static final String CREATED_AT = "created_at";
 
-        public static final String ALLOWED_OUT_CHANNELS = "allowedOutChannels";
+        public static final String ALLOWED_OUT_CHANNELS = "outchannels";
     }
 }
