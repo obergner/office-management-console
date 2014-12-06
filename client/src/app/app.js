@@ -6,7 +6,6 @@ angular.module('app', [
     'ui.router',
     'ui.select',
     'angular-growl',
-    'ncy-angular-breadcrumb',
     'accounts',
     'services.httpRequestTracker',
     'templates.app',
@@ -48,12 +47,8 @@ angular.module('app').controller('AppCtrl', ['$scope', 'growl', 'localizedMessag
     });
 }]);
 
-angular.module('app').controller('HeaderCtrl', ['$scope', '$state', 'httpRequestTracker',
-    function ($scope, $state, httpRequestTracker) {
-
-        $scope.isNavbarActive = function (navBarState) {
-            return $state.current.name === navBarState;
-        };
+angular.module('app').controller('HeaderCtrl', ['$scope', 'httpRequestTracker',
+    function ($scope, httpRequestTracker) {
 
         $scope.hasPendingRequests = function () {
             return httpRequestTracker.hasPendingRequests();

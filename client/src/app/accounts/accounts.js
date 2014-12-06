@@ -13,15 +13,19 @@ angular.module('accounts', [
     $stateProvider
     .state('accounts', {
         url: '/accounts',
-        templateUrl:'accounts/accounts-list.tpl.html',
-        controller:'AccountsViewCtrl',
-        resolve:{
-            accounts:['Account', function (Account) {
-                return Account.query();
-            }]
-        },
-        ncyBreadcrumb: {
-            label: 'Accounts'
+        views: {
+            'mainContentPane': {
+                templateUrl:'accounts/accounts-list.tpl.html',
+                controller:'AccountsViewCtrl',
+                resolve:{
+                    accounts:['Account', function (Account) {
+                        return Account.query();
+                    }]
+                }
+            },
+            'actionBar': {
+                templateUrl: 'accounts/account-action-bar.tpl.html'
+            }
         }
     })
     .state('accounts.new', {
@@ -39,10 +43,7 @@ angular.module('accounts', [
                 },
                 controller: 'CreateAccountCtrl'
             });
-        }],
-        ncyBreadcrumb: {
-            label: 'New Account'
-        }
+        }]
     })
     .state('accounts.edit', {
         parent: 'accounts',
@@ -59,10 +60,7 @@ angular.module('accounts', [
                 },
                 controller: 'UpdateAccountCtrl'
             });
-        }],
-        ncyBreadcrumb: {
-            label: 'Edit Account'
-        }
+        }]
     })
     .state('accounts.delete', {
         parent: 'accounts',
@@ -79,10 +77,7 @@ angular.module('accounts', [
                 },
                 controller: 'DeleteAccountCtrl'
             });
-        }],
-        ncyBreadcrumb: {
-            label: 'Delete Account'
-        }
+        }]
     });
 }])
 
