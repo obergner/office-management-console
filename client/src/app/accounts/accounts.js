@@ -83,6 +83,7 @@ angular.module('accounts', [
 
 .controller('AccountsViewCtrl', ['$scope', '$state', 'accounts', function ($scope, $state, accounts) {
     $scope.accounts = accounts;
+    $scope.accountsSearch = '';
 
     $scope.editAccount = function (account) {
         $state.go('accounts.edit', { uuid: account.uuid });
@@ -91,6 +92,10 @@ angular.module('accounts', [
     $scope.deleteAccount = function (account) {
         $state.go('accounts.delete', { uuid: account.uuid });
     };
+
+    $scope.$on('searchModelUpdated', function(event, searchModel) {
+        $scope.accountsSearch = searchModel;
+    });
 }])
 
 .controller('CreateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'newAccount', 

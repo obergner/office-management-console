@@ -47,10 +47,14 @@ angular.module('app').controller('AppCtrl', ['$scope', 'growl', 'localizedMessag
     });
 }]);
 
-angular.module('app').controller('HeaderCtrl', ['$scope', 'httpRequestTracker',
-    function ($scope, httpRequestTracker) {
+angular.module('app').controller('HeaderCtrl', ['$rootScope', '$scope', 'httpRequestTracker',
+    function ($rootScope, $scope, httpRequestTracker) {
 
-        $scope.hasPendingRequests = function () {
+        $scope.updateSearchModel = function(searchModel) {
+            $rootScope.$broadcast('searchModelUpdated', searchModel);
+        };
+
+        $scope.hasPendingRequests = function() {
             return httpRequestTracker.hasPendingRequests();
         };
     }

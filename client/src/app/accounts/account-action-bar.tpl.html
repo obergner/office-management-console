@@ -1,6 +1,4 @@
-<ul class="nav navbar-nav navbar-right">
-    <li class="divider-vertical"></li>
-    <li class="btn-group-vertical" role="group">
-    <button class="btn btn-primary navbar-btn" ui-sref="accounts.new">Create Account</button>
-    </li>
-</ul>
+<form class="navbar-form navbar-right" role="search">
+    <input type="text" class="form-control" placeholder="Search" ng-model="searchModel" ng-keyup="updateSearchModel(searchModel)">
+    <button class="btn btn-primary" ui-sref="accounts.new">Create account</button>
+</form>

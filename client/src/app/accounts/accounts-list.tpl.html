@@ -19,13 +19,13 @@
                             <th>Name</th>
                             <th>MMA</th>
                             <th>Created</th>
-                            <th>Allowed Out Channels</th>
+                            <th>Out Channels</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr ng-repeat="account in accounts">
+                        <tr ng-repeat="account in accounts | filter:accountsSearch">
                             <td ng-click="editAccount(account)">{{account.uuid}}</td>
                             <td ng-click="editAccount(account)">{{account.name}}</td>
                             <td ng-click="editAccount(account)">{{account.mmaId}}</td>

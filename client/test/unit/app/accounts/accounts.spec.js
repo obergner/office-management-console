@@ -42,8 +42,8 @@ describe('AccountsViewCtrl', function() {
 
     describe('index', function() {
 
-        it("should attach the list of accounts to the scope", inject(function($state) {
-            var $scope = {},
+        it("should attach the list of accounts to the scope", inject(function($state, $rootScope) {
+            var $scope = $rootScope.$new(),
             accounts = createMockAccountList();
 
             runController($scope, $state, accounts);
