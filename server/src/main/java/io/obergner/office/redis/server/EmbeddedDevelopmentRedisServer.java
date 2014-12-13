@@ -39,7 +39,7 @@ public class EmbeddedDevelopmentRedisServer {
         this.log.info("Populating embedded DEVELOPMENT RedisServer with test data ...");
         final Jedis redisClient = new Jedis("127.0.0.1", this.port);
         IntStream.range(0, 100)
-                .mapToObj((idx) -> testAccountForIdx(idx))
+                .mapToObj(this::testAccountForIdx)
                 .forEach(
                         account -> {
                             final Map<String, String> accMap = new HashMap<>();
@@ -49,6 +49,7 @@ public class EmbeddedDevelopmentRedisServer {
                             accMap.put(AccountSchema.Fields.CREATED_AT, String.valueOf(account.createdAt));
                             accMap.put(AccountSchema.Fields.ALLOWED_OUT_CHANNELS, account.allowedOutChannelsConcat());
                             redisClient.hmset(AccountSchema.Keys.accountUuid(account.uuid), accMap);
+                            redisClient.hset(AccountSchema.Keys.ACCOUNT_MMA_INDEX, String.valueOf(account.mmaId), account.uuid.toString());
                         });
         this.log.info("Populated embedded DEVELOPMENT RedisServer with test data");
     }
