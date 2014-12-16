@@ -2,6 +2,7 @@ package io.obergner.office.accounts;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRef;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
@@ -21,7 +22,7 @@ public final class Account implements Serializable {
     private static final String MALFORMED_UUID_ERROR_CODE = "api.error.account.malformed-uuid";
 
     public static Account newAccount(final String name, final long mmaId, final String[] allowedOutChannels) {
-        return new Account(UUID.randomUUID(), name, mmaId, System.currentTimeMillis(), allowedOutChannels);
+        return new Account(UUID.randomUUID(), name, mmaId, System.currentTimeMillis(), allowedOutChannels, null);
     }
 
     @JsonProperty(value = "uuid", required = true)
@@ -42,11 +43,23 @@ public final class Account implements Serializable {
     @JsonProperty(value = "allowedOutChannels", required = true)
     public final String[] allowedOutChannels;
 
+    @JsonProperty(value = "simsmeAccountRef", required = false)
+    public final SimsmeAccountRef simsmeAccountRef;
+
     public Account(final UUID uuid,
                    final String name,
                    final long mmaId,
                    final long createdAt,
                    final String[] allowedOutChannels) {
+        this(uuid, name, mmaId, createdAt, allowedOutChannels, null);
+    }
+
+    public Account(final UUID uuid,
+                   final String name,
+                   final long mmaId,
+                   final long createdAt,
+                   final String[] allowedOutChannels,
+                   final SimsmeAccountRef simsmeAccountRef) {
         notNull(uuid, "Argument 'uuid' must not be null");
         hasText(name, "Argument 'name' must neither be null nor empty");
         notEmpty(allowedOutChannels, "Argument 'allowedOutChannels' must neither be null nor empty");
@@ -55,6 +68,15 @@ public final class Account implements Serializable {
         this.mmaId = mmaId;
         this.createdAt = createdAt;
         this.allowedOutChannels = allowedOutChannels;
+        this.simsmeAccountRef = simsmeAccountRef;
+    }
+
+    public Account(final String uuid,
+                   final String name,
+                   final long mmaId,
+                   final long createdAt,
+                   final String[] allowedOutChannels) {
+        this(uuid, name, mmaId, createdAt, allowedOutChannels, null);
     }
 
     @JsonCreator
@@ -62,12 +84,14 @@ public final class Account implements Serializable {
                    final @JsonProperty("name") String name,
                    final @JsonProperty("mmaId") long mmaId,
                    final @JsonProperty("createdAt") long createdAt,
-                   final @JsonProperty("allowedOutChannels") String[] allowedOutChannels) {
+                   final @JsonProperty("allowedOutChannels") String[] allowedOutChannels,
+                   final @JsonProperty("simsmeAccountRef") SimsmeAccountRef simsmeAccountRef) {
         this.uuid = checkAndConvert(MALFORMED_UUID_ERROR_CODE, "account", "uuid", uuid);
         this.name = name;
         this.mmaId = mmaId;
         this.createdAt = createdAt;
         this.allowedOutChannels = allowedOutChannels;
+        this.simsmeAccountRef = simsmeAccountRef;
     }
 
     public String allowedOutChannelsConcat() {
