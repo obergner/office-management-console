@@ -1,7 +1,4 @@
 buildscript {
-    repositories {
-        jcenter()
-    }
     dependencies {
         classpath "com.moowork.gradle:gradle-grunt-plugin:0.6"
     }
@@ -16,7 +13,7 @@ defaultTasks 'install'
 task zipDist(type: Zip, dependsOn: grunt_release) {
     destinationDir file("${buildDir}/distributions")
     archiveName 'office-management-client.zip'
-    from ('dist/')
+    from('dist/')
     into 'static' // note that this specifies path *in* the archive
 }
 
@@ -24,18 +21,17 @@ artifacts {
     archives zipDist
 }
 
-def angularSrcDir = new File( projectDir, 'src/' )
-def angularVendorDir = new File( projectDir, 'vendor/' )
-def gruntOutputDir = new File( projectDir, 'dist/' )
+def angularSrcDir = new File(projectDir, 'src/')
+def angularVendorDir = new File(projectDir, 'vendor/')
+def gruntOutputDir = new File(projectDir, 'dist/')
 
-tasks
-    .findAll { it.name.startsWith('grunt_') }
-    .each { task -> 
-        task.inputs.dir angularSrcDir
-        task.inputs.dir angularVendorDir
-        task.outputs.dir gruntOutputDir
-        task.dependsOn([ 'installGrunt', 'npmInstall' ] as Set)
-    }
+tasks.findAll { it.name.startsWith('grunt_') }
+        .each { task ->
+    task.inputs.dir angularSrcDir
+    task.inputs.dir angularVendorDir
+    task.outputs.dir gruntOutputDir
+    task.dependsOn(['installGrunt', 'npmInstall'] as Set)
+}
 
 // runs "grunt release" as part of your gradle build
 build.dependsOn grunt_release

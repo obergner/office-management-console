@@ -2,24 +2,24 @@ apply plugin: 'base'
 
 allprojects {
 
-    repositories {
-        flatDir {
-            name "fileRepo"
-            dirs "repo"
-        }
-    }
-
-    uploadArchives {
-        repositories {
-            add project.repositories.fileRepo
-        }
-    }
 }
 
 subprojects {
 
     group = 'io.office-management-console'
     version = '1.0.0-SNAPSHOT'
+
+    buildscript {
+        repositories {
+            mavenCentral()
+            jcenter()
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
 }
 
 

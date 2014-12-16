@@ -1,30 +1,35 @@
 buildscript {
     ext {
-        springBootVersion = '1.1.8.RELEASE'
+        springBootVersion = '1.2.0.RELEASE'
         osPackagePluginVersion = '2.0.3'
-    }
-    repositories {
-        mavenCentral()
+        transmodeDockerPluginVersion = '1.2'
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("com.netflix.nebula:gradle-ospackage-plugin:${osPackagePluginVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "com.netflix.nebula:gradle-ospackage-plugin:${osPackagePluginVersion}"
+        classpath "se.transmode.gradle:gradle-docker:${transmodeDockerPluginVersion}"
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'rpm'
+apply plugin: 'docker'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+mainClassName = 'io.obergner.office.Application'
+
+ext {
+    embeddedRedisVersion = '0.3'
+    jedisVersion = '2.6.1'
+    guavaVersion = 'r03'
+    commonsIoVersion = '2.4'
+}
 
 def unpackedClientResourcesDir = file("${buildDir}/copied-client-resources/main")
 
 repositories {
-    mavenCentral()
-    mavenLocal()
-
     maven {
         url 'http://clojars.org/repo'
     }
@@ -41,31 +46,40 @@ configurations {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-aop")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-remote-shell")
-    compile('redis.embedded:embedded-redis:0.3')
-    compile('redis.clients:jedis:2.6.0')
-    compile('com.google.guava:guava-io:r03')
-    compile('commons-io:commons-io:2.4')
+    compile "org.springframework.boot:spring-boot-starter-aop"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-starter-remote-shell"
+    compile "redis.embedded:embedded-redis:${embeddedRedisVersion}"
+    compile "redis.clients:jedis:${jedisVersion}"
+    compile "com.google.guava:guava-io:${guavaVersion}"
+    compile "commons-io:commons-io:${commonsIoVersion}"
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile "org.springframework.boot:spring-boot-starter-test"
 
     clientResources project(':client')
-    clientResources("${group}:client:${version}@zip")
+    clientResources "${group}:client:${version}@zip"
 }
 
 jar {
     baseName = 'server'
 }
 
+docker {
+    //baseImage "jeanblanchard/busybox-java:8"
+    maintainer 'Olaf Bergner "olaf.bergner@gmx.de"'
+}
+
+distDocker {
+    exposePort 8080
+}
+
 task unpackClientResources(type: Copy) {
     configurations.clientResources.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            if (artifact.file.name.endsWith('.zip')) {
-                from zipTree(artifact.file)
-                into unpackedClientResourcesDir
-            }
+        if (artifact.file.name.endsWith('.zip')) {
+            from zipTree(artifact.file)
+            into unpackedClientResourcesDir
+        }
     }
 }
 
