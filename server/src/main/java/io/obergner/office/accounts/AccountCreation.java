@@ -2,11 +2,12 @@ package io.obergner.office.accounts;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRef;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefCreation;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public final class AccountCreation implements Serializable {
 
@@ -25,8 +26,8 @@ public final class AccountCreation implements Serializable {
     @JsonProperty(value = "allowedOutChannels", required = true)
     public final String[] allowedOutChannels;
 
-    @JsonProperty(value = "simsmeAccountRef", required = false)
-    public final SimsmeAccountRef simsmeAccountRef;
+    @JsonProperty(value = "simsmeAccountRefCreation", required = false)
+    public final SimsmeAccountRefCreation simsmeAccountRefCreation;
 
     public AccountCreation(final String name,
                            final long mmaId,
@@ -40,12 +41,16 @@ public final class AccountCreation implements Serializable {
                            final @JsonProperty("mmaId") long mmaId,
                            final @JsonProperty("createdAt") long createdAt,
                            final @JsonProperty("allowedOutChannels") String[] allowedOutChannels,
-                           final @JsonProperty("simsmeAccountRef") SimsmeAccountRef simsmeAccountRef) {
+                           final @JsonProperty("simsmeAccountRefCreation") SimsmeAccountRefCreation simsmeAccountRefCreation) {
         this.name = name;
         this.mmaId = mmaId;
         this.createdAt = createdAt;
         this.allowedOutChannels = allowedOutChannels;
-        this.simsmeAccountRef = simsmeAccountRef;
+        this.simsmeAccountRefCreation = simsmeAccountRefCreation;
+    }
+
+    public boolean createsSimsmeAccountRef() {
+        return this.simsmeAccountRefCreation != null;
     }
 
     public String allowedOutChannelsConcat() {
@@ -57,5 +62,16 @@ public final class AccountCreation implements Serializable {
             result.deleteCharAt(result.length() - 1);
         }
         return result.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "AccountCreation[" +
+                "name:'" + name + '\'' +
+                "|mmaId:" + mmaId +
+                "|createdAt:" + createdAt +
+                "|allowedOutChannels:" + Arrays.toString(allowedOutChannels) +
+                "|simsmeAccountRefCreation:" + simsmeAccountRefCreation +
+                ']';
     }
 }

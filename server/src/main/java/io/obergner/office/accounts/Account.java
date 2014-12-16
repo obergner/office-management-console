@@ -43,7 +43,7 @@ public final class Account implements Serializable {
     @JsonProperty(value = "allowedOutChannels", required = true)
     public final String[] allowedOutChannels;
 
-    @JsonProperty(value = "simsmeAccountRef", required = false)
+    @JsonProperty(value = "simsmeAccountRefCreation", required = false)
     public final SimsmeAccountRef simsmeAccountRef;
 
     public Account(final UUID uuid,
@@ -85,7 +85,7 @@ public final class Account implements Serializable {
                    final @JsonProperty("mmaId") long mmaId,
                    final @JsonProperty("createdAt") long createdAt,
                    final @JsonProperty("allowedOutChannels") String[] allowedOutChannels,
-                   final @JsonProperty("simsmeAccountRef") SimsmeAccountRef simsmeAccountRef) {
+                   final @JsonProperty("simsmeAccountRefCreation") SimsmeAccountRef simsmeAccountRef) {
         this.uuid = checkAndConvert(MALFORMED_UUID_ERROR_CODE, "account", "uuid", uuid);
         this.name = name;
         this.mmaId = mmaId;
