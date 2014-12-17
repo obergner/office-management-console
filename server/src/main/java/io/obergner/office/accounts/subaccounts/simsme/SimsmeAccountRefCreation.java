@@ -1,6 +1,7 @@
 package io.obergner.office.accounts.subaccounts.simsme;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 
 import static org.springframework.util.Assert.notNull;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "action")
 @JsonTypeIdResolver(SimsmeAccountRefCreation.SimsmeAccountRefCreationTypeIdResolver.class)
 public abstract class SimsmeAccountRefCreation implements Serializable {
