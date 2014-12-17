@@ -27,9 +27,9 @@ public class RedisServerSettings {
 
     @Override
     public String toString() {
-        return "RedisServerSettings{" +
-                "host='" + host + '\'' +
-                ", port=" + port +
-                '}';
+        return "RedisServerSettings[" +
+                "host:'" + host + '\'' +
+                "|port:" + port +
+                ']';
     }
 }

@@ -6,7 +6,7 @@ public final class UuidValidation {
 
     public static UUID checkAndConvert(final String code, final String bean, final String field, final String uuidStr) {
         if (uuidStr == null) {
-            throw new ApiInputValidationException(code, bean, field, uuidStr);
+            throw new ApiInputValidationException(code, bean, field, null);
         }
         try {
             return UUID.fromString(uuidStr);

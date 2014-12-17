@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.springframework.util.Assert.notNull;
 
 @RestController
 @RequestMapping("/accounts")
@@ -24,7 +24,8 @@ public class AccountController {
 
     @Autowired
     public AccountController(final AccountManager accountManager) {
-        this.accountManager = checkNotNull(accountManager);
+        notNull(accountManager, "Argument 'accountManager' must not be null");
+        this.accountManager = accountManager;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

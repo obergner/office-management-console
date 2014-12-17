@@ -26,7 +26,7 @@ public class SimsmeAccountRefTest {
     @Test
     public void should_correctly_serialize_SimsmeAccountRef() throws IOException {
         final SimsmeGuid expectedSimsmeGuid = new SimsmeGuid(99, UUID.randomUUID());
-        final SimsmeAccountRef simsmeAccountRef = new SimsmeAccountRef(expectedSimsmeGuid);
+        final SimsmeAccountRef simsmeAccountRef = SimsmeAccountRef.create(expectedSimsmeGuid);
         final String jsonRepresentation = "{\"simsmeGuid\":\"" + expectedSimsmeGuid.toString() + "\"}";
         final StringWriter actualJsonRepresentation = new StringWriter();
 

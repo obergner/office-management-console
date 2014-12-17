@@ -51,10 +51,10 @@ public class CreateAccount {
 
     @Override
     public String toString() {
-        return "CreateAccount{" +
-                "name='" + name + '\'' +
-                ", mmaId=" + mmaId +
-                ", allowedOutChannels=" + Arrays.toString(allowedOutChannels) +
-                '}';
+        return "CreateAccount[" +
+                "name:'" + name + '\'' +
+                "|mmaId:" + mmaId +
+                "|allowedOutChannels:" + Arrays.toString(allowedOutChannels) +
+                ']';
     }
 }

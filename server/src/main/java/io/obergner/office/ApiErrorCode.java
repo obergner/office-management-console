@@ -81,9 +81,9 @@ public final class ApiErrorCode {
 
     @Override
     public String toString() {
-        return "ApiErrorCode{" +
-                "code='" + code + '\'' +
-                ", status=" + status +
-                '}';
+        return "ApiErrorCode[" +
+                "code:'" + code + '\'' +
+                "|status:" + status +
+                ']';
     }
 }

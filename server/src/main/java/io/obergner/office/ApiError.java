@@ -34,10 +34,10 @@ public class ApiError {
 
     @Override
     public String toString() {
-        return "ApiError{" +
-                "status=" + status +
-                ", code='" + code + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+        return "ApiError[" +
+                "status:" + status +
+                "|code:'" + code + '\'' +
+                "|message:'" + message + '\'' +
+                ']';
     }
 }

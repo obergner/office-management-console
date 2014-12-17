@@ -88,9 +88,10 @@ public final class RedisAccountManager implements AccountManager {
         try {
             this.log.info("Creating [{}] ...", newAccount);
             redisClient = this.redisClientPool.getResource();
+            final String optionalSimsmeAccountGuid = newAccount.simsmeAccountRef.simsmeGuid().map(simsmeGuid -> simsmeGuid.toString()).orElse(AccountSchema.NULL_VALUE);
             redisClient.evalsha(this.scriptHandles.createAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
-                    Arrays.asList(newAccount.uuid.toString(), newAccount.name, String.valueOf(newAccount.mmaId), String.valueOf(newAccount.createdAt), newAccount.allowedOutChannelsConcat()));
+                    Arrays.asList(newAccount.uuid.toString(), newAccount.name, String.valueOf(newAccount.mmaId), String.valueOf(newAccount.createdAt), newAccount.allowedOutChannelsConcat(), optionalSimsmeAccountGuid));
             this.log.info("Successfully created new {}", newAccount);
 
             return newAccount;

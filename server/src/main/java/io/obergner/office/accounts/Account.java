@@ -68,7 +68,7 @@ public final class Account implements Serializable {
         this.mmaId = mmaId;
         this.createdAt = createdAt;
         this.allowedOutChannels = allowedOutChannels;
-        this.simsmeAccountRef = simsmeAccountRef;
+        this.simsmeAccountRef = simsmeAccountRef != null ? simsmeAccountRef : SimsmeAccountRef.NULL;
     }
 
     public Account(final String uuid,
@@ -127,12 +127,13 @@ public final class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "Account{" +
-                "uuid=" + uuid +
-                ", name='" + name + '\'' +
-                ", mmaId=" + mmaId +
-                ", createdAt=" + createdAt +
-                ", allowedOutChannels=" + Arrays.toString(allowedOutChannels) +
-                '}';
+        return "Account[" +
+                "uuid:" + uuid +
+                "|name:'" + name + '\'' +
+                "|mmaId:" + mmaId +
+                "|createdAt:" + createdAt +
+                "|allowedOutChannels:" + Arrays.toString(allowedOutChannels) +
+                "|simsmeAccountRef:" + simsmeAccountRef +
+                ']';
     }
 }

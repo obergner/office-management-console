@@ -4,6 +4,8 @@ import java.util.UUID;
 
 public class AccountSchema {
 
+    public static final String NULL_VALUE = "__NULL__";
+
     public static class Keys {
 
         public static final String ACCOUNT_MMA_INDEX = "account:mma:index";
@@ -28,5 +30,7 @@ public class AccountSchema {
         public static final String CREATED_AT = "created_at";
 
         public static final String ALLOWED_OUT_CHANNELS = "outchannels";
+
+        public static final String SIMSME_ACCOUNT_GUID = "simsme_account_guid";
     }
 }

@@ -10,7 +10,7 @@ import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Arrays;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class AccountCreation implements Serializable {
 
     private static final long serialVersionUID = -7668995662389526364L;

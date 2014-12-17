@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ApiValidationError extends ApiError {
@@ -34,6 +35,13 @@ public class ApiValidationError extends ApiError {
         this(HttpStatus.valueOf(rawStatus), code, message, fieldValidationErrors);
     }
 
+    @Override
+    public String toString() {
+        return "ApiValidationError[" +
+                "fieldValidationErrors:" + Arrays.toString(fieldValidationErrors) +
+                ']';
+    }
+
     public static class FieldValidationError {
 
         @JsonProperty("field")
@@ -50,10 +58,10 @@ public class ApiValidationError extends ApiError {
 
         @Override
         public String toString() {
-            return "FieldValidationError{" +
-                    "field='" + field + '\'' +
-                    ", message='" + message + '\'' +
-                    '}';
+            return "FieldValidationError[" +
+                    "field:'" + field + '\'' +
+                    "|message:'" + message + '\'' +
+                    ']';
         }
     }
 }

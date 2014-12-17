@@ -1,6 +1,5 @@
 package io.obergner.office.accounts.redis;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,8 @@ import redis.clients.jedis.JedisPool;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+
+import static org.springframework.util.Assert.notNull;
 
 class LuaScriptRegistrar {
 
@@ -30,11 +31,11 @@ class LuaScriptRegistrar {
                       final String deleteAccountScriptSha,
                       final String getAccountByMmaIdScriptSha,
                       final String getAllAccountsScriptSha) {
-            this.createAccountScriptSha = Preconditions.checkNotNull(createAccountScriptSha);
-            this.updateAccountScriptSha = Preconditions.checkNotNull(updateAccountScriptSha);
-            this.deleteAccountScriptSha = Preconditions.checkNotNull(deleteAccountScriptSha);
-            this.getAccountByMmaIdScriptSha = Preconditions.checkNotNull(getAccountByMmaIdScriptSha);
-            this.getAllAccountsScriptSha = Preconditions.checkNotNull(getAllAccountsScriptSha);
+            this.createAccountScriptSha = createAccountScriptSha;
+            this.updateAccountScriptSha = updateAccountScriptSha;
+            this.deleteAccountScriptSha = deleteAccountScriptSha;
+            this.getAccountByMmaIdScriptSha = getAccountByMmaIdScriptSha;
+            this.getAllAccountsScriptSha = getAllAccountsScriptSha;
         }
     }
 
@@ -53,7 +54,8 @@ class LuaScriptRegistrar {
     private final JedisPool redisClientPool;
 
     LuaScriptRegistrar(final JedisPool redisClientPool) {
-        this.redisClientPool = Preconditions.checkNotNull(redisClientPool);
+        notNull(redisClientPool, "Argument 'redisClientPool' must not be null");
+        this.redisClientPool = redisClientPool;
     }
 
     ScriptHandles register() throws IOException {
@@ -75,8 +77,14 @@ class LuaScriptRegistrar {
     }
 
     private String registerScript(final String script) {
-        try (final Jedis redisClient = this.redisClientPool.getResource()) {
+        Jedis redisClient = null;
+        try {
+            redisClient = this.redisClientPool.getResource();
             return redisClient.scriptLoad(script);
+        } finally {
+            if (redisClient != null) {
+                this.redisClientPool.returnResource(redisClient);
+            }
         }
     }
 
