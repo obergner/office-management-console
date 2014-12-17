@@ -61,4 +61,22 @@ public class AccountCreationJsonDeSerializationTest {
 
         assertEquals(expectedAccountCreation, deserialized);
     }
+
+    @Test
+    public void should_correctly_serialze_AccountCreation_with_CreateNewSimmseAccountRefCreation() throws IOException {
+        final CreateNewSimsmeAccountRefCreation createNewSimsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation("simsmeAccountName", "simsmeAccountImage");
+        final AccountCreation accountCreation = new AccountCreation("expectedName", 1232234, new String[]{"channel1", "channel2"}, createNewSimsmeAccountRefCreation);
+
+        final String expectedJsonRepresentation = "{\"name\":\"" + accountCreation.name +
+                "\",\"mmaId\":" + accountCreation.mmaId +
+                ",\"allowedOutChannels\":[\"" + accountCreation.allowedOutChannels[0] + "\",\"" + accountCreation.allowedOutChannels[1] + "\"]" +
+                ",\"simsmeAccountRefCreation\":{\"action\":\"" + createNewSimsmeAccountRefCreation.action.toString() +
+                "\",\"name\":\"" + createNewSimsmeAccountRefCreation.name +
+                "\",\"imageBase64Jpeg\":\"" + createNewSimsmeAccountRefCreation.imageBase64Jpeg + "\"}}";
+
+        final StringWriter actualJsonRepresentation = new StringWriter();
+        OBJECT_MAPPER.writeValue(actualJsonRepresentation, accountCreation);
+
+        assertEquals(expectedJsonRepresentation, actualJsonRepresentation.toString());
+    }
 }

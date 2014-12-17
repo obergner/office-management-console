@@ -1,6 +1,7 @@
 package io.obergner.office.redis.server;
 
 import io.obergner.office.Profiles;
+import io.obergner.office.redis.RedisServerSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -12,7 +13,7 @@ import java.io.IOException;
 public class RedisServerProductionConfiguration implements RedisServerConfiguration {
 
     @Bean
-    public EmbeddedDevelopmentRedisServer redisServer() throws IOException {
+    public EmbeddedDevelopmentRedisServer redisServer(final RedisServerSettings redisServerSettings) throws IOException {
         return null;
     }
 }
