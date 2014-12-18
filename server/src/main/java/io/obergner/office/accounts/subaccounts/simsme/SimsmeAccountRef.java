@@ -55,7 +55,7 @@ public final class SimsmeAccountRef implements Serializable {
 
     @Override
     public int hashCode() {
-        return simsmeGuid.hashCode();
+        return this == NULL ? System.identityHashCode(this) : simsmeGuid.hashCode();
     }
 
     @Override
