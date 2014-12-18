@@ -3,7 +3,7 @@ package io.obergner.office.accounts;
 import java.util.List;
 import java.util.UUID;
 
-public interface AccountManager {
+public interface AccountDao {
 
     Account accountByUuid(final UUID uuid);
 
@@ -12,8 +12,6 @@ public interface AccountManager {
                           final String[] allowedOutChannels);
 
     Account createAccount(final Account account);
-
-    Account createAccount(final AccountCreation accountCreation);
 
     Account updateAccount(final Account account);
 

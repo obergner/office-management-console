@@ -1,7 +1,7 @@
 package io.obergner.office.test;
 
 import io.obergner.office.accounts.Account;
-import io.obergner.office.accounts.AccountManager;
+import io.obergner.office.accounts.AccountDao;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +12,7 @@ public final class RedisTestAccounts {
     public static final String[] ALL_ALLOWED_OUT_CHANNELS = new String[]{"USSD", "FlashSMS", "SIMSme"};
 
     public static final List<Account> ALL_ACCOUNTS = IntStream.range(0, 10)
-            .mapToObj((idx) -> accountForIdx(idx))
+            .mapToObj(RedisTestAccounts::accountForIdx)
             .collect(Collectors.toList());
 
     private static Account accountForIdx(final int idx) {
@@ -23,7 +23,7 @@ public final class RedisTestAccounts {
         return ALL_ACCOUNTS.get(0);
     }
 
-    public static void storeUsing(final AccountManager accountManager) {
-        ALL_ACCOUNTS.forEach((account) -> accountManager.createAccount(account));
+    public static void storeUsing(final AccountDao accountDao) {
+        ALL_ACCOUNTS.forEach(accountDao::createAccount);
     }
 }

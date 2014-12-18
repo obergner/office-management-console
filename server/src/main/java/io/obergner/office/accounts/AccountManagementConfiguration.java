@@ -1,7 +1,9 @@
 package io.obergner.office.accounts;
 
-import io.obergner.office.accounts.redis.RedisAccountManager;
+import io.obergner.office.accounts.impl.CoordinatingAccountManager;
+import io.obergner.office.accounts.redis.RedisAccountDao;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountManagementConfiguration;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountManager;
 import io.obergner.office.redis.client.RedisClientConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +15,13 @@ import redis.clients.jedis.JedisPool;
 public class AccountManagementConfiguration {
 
     @Bean
-    public AccountManager accountManager(final JedisPool jedisPool) {
-        return new RedisAccountManager(jedisPool);
+    public AccountDao accountDao(final JedisPool jedisPool) {
+        return new RedisAccountDao(jedisPool);
+    }
+
+    @Bean
+    public AccountManager accountManager(final AccountDao accountDao, final SimsmeAccountManager simsmeAccountManager) {
+        return new CoordinatingAccountManager(accountDao, simsmeAccountManager);
     }
 
     @Bean

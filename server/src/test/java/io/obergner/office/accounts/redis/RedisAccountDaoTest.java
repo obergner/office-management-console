@@ -25,14 +25,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class RedisAccountManagerTest {
+public class RedisAccountDaoTest {
 
     private static final int PORT = 6379;
 
     @ClassRule
     public static final EmbeddedRedisServer EMBEDDED_REDIS_SERVER = EmbeddedRedisServer.listenOnPort(PORT);
 
-    private static final RedisAccountManager OBJECT_UNDER_TEST = new RedisAccountManager("127.0.0.1", PORT);
+    private static final RedisAccountDao OBJECT_UNDER_TEST = new RedisAccountDao("127.0.0.1", PORT);
 
     @BeforeClass
     public static void initializeObjectUnderTest() throws IOException {

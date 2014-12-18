@@ -61,6 +61,9 @@ public class AccountControllerITest {
     private AccountManager accountManager;
 
     @Autowired
+    private AccountDao accountDao;
+
+    @Autowired
     private JedisPool jedisPool;
 
     private Jedis redisClient;
@@ -75,7 +78,7 @@ public class AccountControllerITest {
     @Before
     public void prepareRedis() {
         this.redisClient.flushDB();
-        RedisTestAccounts.storeUsing(this.accountManager);
+        RedisTestAccounts.storeUsing(this.accountDao);
     }
 
     @After

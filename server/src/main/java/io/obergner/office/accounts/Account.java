@@ -3,6 +3,7 @@ package io.obergner.office.accounts;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRef;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
@@ -22,7 +23,14 @@ public final class Account implements Serializable {
     private static final String MALFORMED_UUID_ERROR_CODE = "api.error.account.malformed-uuid";
 
     public static Account newAccount(final String name, final long mmaId, final String[] allowedOutChannels) {
-        return new Account(UUID.randomUUID(), name, mmaId, System.currentTimeMillis(), allowedOutChannels, null);
+        return newAccount(name, mmaId, allowedOutChannels, null);
+    }
+
+    public static Account newAccount(final String name,
+                                     final long mmaId,
+                                     final String[] allowedOutChannels,
+                                     final SimsmeGuid simsmeGuid) {
+        return new Account(UUID.randomUUID(), name, mmaId, System.currentTimeMillis(), allowedOutChannels, simsmeGuid);
     }
 
     @JsonProperty(value = "uuid", required = true)
@@ -51,7 +59,16 @@ public final class Account implements Serializable {
                    final long mmaId,
                    final long createdAt,
                    final String[] allowedOutChannels) {
-        this(uuid, name, mmaId, createdAt, allowedOutChannels, null);
+        this(uuid, name, mmaId, createdAt, allowedOutChannels, (SimsmeAccountRef) null);
+    }
+
+    public Account(final UUID uuid,
+                   final String name,
+                   final long mmaId,
+                   final long createdAt,
+                   final String[] allowedOutChannels,
+                   final SimsmeGuid simsmeGuid) {
+        this(uuid, name, mmaId, createdAt, allowedOutChannels, SimsmeAccountRef.create(simsmeGuid));
     }
 
     public Account(final UUID uuid,

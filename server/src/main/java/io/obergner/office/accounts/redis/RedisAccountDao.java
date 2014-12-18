@@ -2,7 +2,8 @@ package io.obergner.office.accounts.redis;
 
 import io.obergner.office.ApiErrorCode;
 import io.obergner.office.accounts.Account;
-import io.obergner.office.accounts.AccountManager;
+import io.obergner.office.accounts.AccountDao;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-public final class RedisAccountManager implements AccountManager {
+public final class RedisAccountDao implements AccountDao {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -31,11 +32,11 @@ public final class RedisAccountManager implements AccountManager {
 
     private LuaScriptRegistrar.ScriptHandles scriptHandles;
 
-    public RedisAccountManager(final String redisHost, final int redisPort) {
+    public RedisAccountDao(final String redisHost, final int redisPort) {
         this(new JedisPool(new JedisPoolConfig(), redisHost, redisPort));
     }
 
-    public RedisAccountManager(final JedisPool redisClientPool) {
+    public RedisAccountDao(final JedisPool redisClientPool) {
         this.redisClientPool = redisClientPool;
     }
 
@@ -44,7 +45,7 @@ public final class RedisAccountManager implements AccountManager {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
-            this.log.info("Looking up account by UUID [{}] ...", uuid);
+            this.log.debug("Looking up account by UUID [{}] ...", uuid);
             redisClient = this.redisClientPool.getResource();
             final Object result = redisClient.hmget(AccountSchema.Keys.accountUuid(uuid),
                     AccountSchema.Fields.UUID,
@@ -63,7 +64,7 @@ public final class RedisAccountManager implements AccountManager {
             final long createdAt = Long.parseLong(resultList.get(3));
             final String[] allowedOutChannels = resultList.get(4).split(",");
             final Account account = new Account(accountUuid, name, mma, createdAt, allowedOutChannels);
-            this.log.info("Successfully looked up account {}", account);
+            this.log.debug("Successfully looked up account {}", account);
 
             return account;
         } finally {
@@ -86,13 +87,13 @@ public final class RedisAccountManager implements AccountManager {
         checkNotNull(newAccount);
         Jedis redisClient = null;
         try {
-            this.log.info("Creating [{}] ...", newAccount);
+            this.log.debug("Creating [{}] ...", newAccount);
             redisClient = this.redisClientPool.getResource();
-            final String optionalSimsmeAccountGuid = newAccount.simsmeAccountRef.simsmeGuid().map(simsmeGuid -> simsmeGuid.toString()).orElse(AccountSchema.NULL_VALUE);
+            final String optionalSimsmeAccountGuid = newAccount.simsmeAccountRef.simsmeGuid().map(SimsmeGuid::toString).orElse(AccountSchema.NULL_VALUE);
             redisClient.evalsha(this.scriptHandles.createAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
                     Arrays.asList(newAccount.uuid.toString(), newAccount.name, String.valueOf(newAccount.mmaId), String.valueOf(newAccount.createdAt), newAccount.allowedOutChannelsConcat(), optionalSimsmeAccountGuid));
-            this.log.info("Successfully created new {}", newAccount);
+            this.log.debug("Successfully created new {}", newAccount);
 
             return newAccount;
         } finally {
@@ -107,12 +108,12 @@ public final class RedisAccountManager implements AccountManager {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
-            this.log.info("Updating [{}] ...", account);
+            this.log.debug("Updating [{}] ...", account);
             redisClient = this.redisClientPool.getResource();
             redisClient.evalsha(this.scriptHandles.updateAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
                     Arrays.asList(account.uuid.toString(), account.name, String.valueOf(account.mmaId), account.allowedOutChannelsConcat()));
-            this.log.info("Successfully updated {}", account);
+            this.log.debug("Successfully updated {}", account);
 
             return account;
         } finally {
@@ -127,12 +128,12 @@ public final class RedisAccountManager implements AccountManager {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
-            this.log.info("Deleting account [uuid:{}] ...", accountUuid);
+            this.log.debug("Deleting account [uuid:{}] ...", accountUuid);
             redisClient = this.redisClientPool.getResource();
             redisClient.evalsha(this.scriptHandles.deleteAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
                     Arrays.asList(accountUuid.toString()));
-            this.log.info("Successfully deleted account [uuid:{}]", accountUuid);
+            this.log.debug("Successfully deleted account [uuid:{}]", accountUuid);
         } finally {
             if (redisClient != null) {
                 this.redisClientPool.returnResource(redisClient);
@@ -145,7 +146,7 @@ public final class RedisAccountManager implements AccountManager {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
-            this.log.info("Looking up account by MMA-ID [{}] ...", mmaId);
+            this.log.debug("Looking up account by MMA-ID [{}] ...", mmaId);
             redisClient = this.redisClientPool.getResource();
             final Object result = redisClient.evalsha(this.scriptHandles.getAccountByMmaIdScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
@@ -158,7 +159,7 @@ public final class RedisAccountManager implements AccountManager {
             final long createdAt = Long.parseLong(resultList.get(7));
             final String[] allowedOutChannels = resultList.get(9).split(",");
             final Account account = new Account(uuid, name, mma, createdAt, allowedOutChannels);
-            this.log.info("Successfully looked up account {}", account);
+            this.log.debug("Successfully looked up account {}", account);
 
             return account;
         } finally {
@@ -173,7 +174,7 @@ public final class RedisAccountManager implements AccountManager {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
-            this.log.info("Looking up all accounts ...");
+            this.log.debug("Looking up all accounts ...");
             redisClient = this.redisClientPool.getResource();
             final Object result = redisClient.evalsha(this.scriptHandles.getAllAccountsScriptSha);
             @SuppressWarnings("unchecked")
@@ -186,7 +187,7 @@ public final class RedisAccountManager implements AccountManager {
                             Long.parseLong(accountFields.get(3)),
                             accountFields.get(4).split(",")))
                     .collect(Collectors.toList());
-            this.log.info("Successfully looked up [{}] accounts", res.size());
+            this.log.debug("Successfully looked up [{}] accounts", res.size());
 
             return res;
         } finally {

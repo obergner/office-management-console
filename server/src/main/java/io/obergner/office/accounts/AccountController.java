@@ -1,8 +1,8 @@
 package io.obergner.office.accounts;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +22,8 @@ public class AccountController {
 
     private final AccountManager accountManager;
 
-    @Autowired
     public AccountController(final AccountManager accountManager) {
-        notNull(accountManager, "Argument 'accountManager' must not be null");
+        notNull(accountManager, "Argument 'accountDao' must not be null");
         this.accountManager = accountManager;
     }
 
@@ -38,6 +37,14 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public Account createAccount(@RequestBody @Valid final CreateAccount newAccount) {
         return this.accountManager.createAccount(newAccount.name, newAccount.mmaId, newAccount.allowedOutChannels);
+    }
+
+    @RequestMapping(value = "/creations", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Void> postAccountCreation(@RequestBody @Valid final CreateAccount newAccount) {
+        final ResponseEntity<Void> result = new ResponseEntity<>(HttpStatus.CREATED);
+        result.getHeaders().setLocation(null);
+        return result;
     }
 
     @RequestMapping(value = "/uuid/{uuid}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
