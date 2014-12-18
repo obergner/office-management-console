@@ -22,7 +22,9 @@ public final class SimsmeGuid implements Serializable {
     private static final Pattern SIMSME_GUID_PATTERN = Pattern.compile("^(\\d{1,3}):\\{([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})\\}$");
 
     public static SimsmeGuid parse(final String simsmeGuidStr) {
-        notNull(simsmeGuidStr, "Argument 'simsmeGuidStr' must not be null");
+        if (simsmeGuidStr == null) {
+            return null;
+        }
         final Matcher simsmeGuidMatcher = SIMSME_GUID_PATTERN.matcher(simsmeGuidStr);
         if (!simsmeGuidMatcher.find()) {
             throw new IllegalArgumentException("Input string ['" + simsmeGuidStr + "'] is not a valid SIMSme GUID");

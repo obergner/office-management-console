@@ -108,7 +108,7 @@ public final class Account implements Serializable {
         this.mmaId = mmaId;
         this.createdAt = createdAt;
         this.allowedOutChannels = allowedOutChannels;
-        this.simsmeAccountRef = simsmeAccountRef;
+        this.simsmeAccountRef = simsmeAccountRef != null ? simsmeAccountRef : SimsmeAccountRef.NULL;
     }
 
     @Override
@@ -118,7 +118,12 @@ public final class Account implements Serializable {
 
         final Account account = (Account) o;
 
-        return createdAt == account.createdAt && mmaId == account.mmaId && Arrays.equals(allowedOutChannels, account.allowedOutChannels) && name.equals(account.name) && uuid.equals(account.uuid);
+        return createdAt == account.createdAt
+                && mmaId == account.mmaId
+                && Arrays.equals(allowedOutChannels, account.allowedOutChannels)
+                && name.equals(account.name)
+                && simsmeAccountRef.equals(account.simsmeAccountRef)
+                && uuid.equals(account.uuid);
     }
 
     @Override
@@ -128,6 +133,7 @@ public final class Account implements Serializable {
         result = 31 * result + (int) (mmaId ^ (mmaId >>> 32));
         result = 31 * result + (int) (createdAt ^ (createdAt >>> 32));
         result = 31 * result + Arrays.hashCode(allowedOutChannels);
+        result = 31 * result + simsmeAccountRef.hashCode();
         return result;
     }
 

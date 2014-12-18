@@ -125,7 +125,7 @@ public class AccountControllerITest {
     @Test
     public void create_account_should_return_error_response_if_new_account_has_duplicate_mma_id() throws Exception {
         final String newAccountName = this.testName.getMethodName();
-        final long duplicateMmaId = RedisTestAccounts.existingAccount().mmaId;
+        final long duplicateMmaId = RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().mmaId;
         final CreateAccount request = new CreateAccount(newAccountName, duplicateMmaId, RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS);
 
         final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts", request, String.class);
@@ -204,14 +204,14 @@ public class AccountControllerITest {
         final String newAccountName = this.testName.getMethodName();
         final long newAccountMmaId = 783561234L;
         final String[] newAccountAllowedOutChannels = new String[]{"Updated_Channel_1", "Updated_Channel_2"};
-        final Account request = new Account(RedisTestAccounts.existingAccount().uuid,
+        final Account request = new Account(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid,
                 newAccountName,
                 newAccountMmaId,
-                RedisTestAccounts.existingAccount().createdAt,
+                RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().createdAt,
                 newAccountAllowedOutChannels);
 
         final ResponseEntity<Account> entity = this.restClient.exchange(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid.toString(),
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 HttpMethod.PUT,
                 new HttpEntity<>(request, headers),
                 Account.class);
@@ -258,14 +258,14 @@ public class AccountControllerITest {
         final String newAccountName = "";
         final long newAccountMmaId = 783561234L;
         final String[] newAccountAllowedOutChannels = new String[]{"Updated_Channel_1", "Updated_Channel_2"};
-        final Account request = new Account(RedisTestAccounts.existingAccount().uuid.toString(),
+        final Account request = new Account(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 newAccountName,
                 newAccountMmaId,
-                RedisTestAccounts.existingAccount().createdAt,
+                RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().createdAt,
                 newAccountAllowedOutChannels);
 
         final ResponseEntity<String> entity = this.restClient.exchange(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid.toString(),
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 HttpMethod.PUT,
                 new HttpEntity<>(request, headers),
                 String.class);
@@ -290,14 +290,14 @@ public class AccountControllerITest {
         final String newAccountName = this.testName.getMethodName();
         final long newAccountMmaId = -1L;
         final String[] newAccountAllowedOutChannels = new String[]{"Updated_Channel_1", "Updated_Channel_2"};
-        final Account request = new Account(RedisTestAccounts.existingAccount().uuid,
+        final Account request = new Account(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid,
                 newAccountName,
                 newAccountMmaId,
-                RedisTestAccounts.existingAccount().createdAt,
+                RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().createdAt,
                 newAccountAllowedOutChannels);
 
         final ResponseEntity<String> entity = this.restClient.exchange(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid.toString(),
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 HttpMethod.PUT,
                 new HttpEntity<>(request, headers),
                 String.class);
@@ -322,14 +322,14 @@ public class AccountControllerITest {
         final String newAccountName = this.testName.getMethodName();
         final long newAccountMmaId = 783561234L;
         final String[] newAccountAllowedOutChannels = new String[0];
-        final Account request = new Account(RedisTestAccounts.existingAccount().uuid.toString(),
+        final Account request = new Account(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 newAccountName,
                 newAccountMmaId,
-                RedisTestAccounts.existingAccount().createdAt,
+                RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().createdAt,
                 newAccountAllowedOutChannels);
 
         final ResponseEntity<String> entity = this.restClient.exchange(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid.toString(),
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 HttpMethod.PUT,
                 new HttpEntity<>(request, headers),
                 String.class);
@@ -354,7 +354,7 @@ public class AccountControllerITest {
         final String accountJson = "{\"uuid\":\"a-mightily-malformed-uuid\",\"name\":\"updateAccountShouldReturnErrorResponseIfAccountToUpdateContainsMalformedUuid\",\"mmaId\":783561234,\"createdAt\":1416949301176,\"allowedOutChannels\":[\"ch1\"]}";
 
         final ResponseEntity<ApiError> entity = this.restClient.exchange(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid.toString(),
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 HttpMethod.PUT,
                 new HttpEntity<>(accountJson, headers),
                 ApiError.class);
@@ -368,16 +368,16 @@ public class AccountControllerITest {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
         final ResponseEntity<String> entity = this.restClient.exchange(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid.toString(),
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid.toString(),
                 HttpMethod.DELETE,
                 new HttpEntity<>(headers),
                 String.class);
 
         assertEquals(HttpStatus.OK, entity.getStatusCode());
 
-        final boolean accountStillStoredInRedis = this.redisClient.exists(AccountSchema.Keys.accountUuid(RedisTestAccounts.existingAccount().uuid));
+        final boolean accountStillStoredInRedis = this.redisClient.exists(AccountSchema.Keys.accountUuid(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid));
         assertFalse(accountStillStoredInRedis);
-        final boolean accountMmaStillMappedInRedis = this.redisClient.hexists(AccountSchema.Keys.ACCOUNT_MMA_INDEX, String.valueOf(RedisTestAccounts.existingAccount().mmaId));
+        final boolean accountMmaStillMappedInRedis = this.redisClient.hexists(AccountSchema.Keys.ACCOUNT_MMA_INDEX, String.valueOf(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().mmaId));
         assertFalse(accountMmaStillMappedInRedis);
     }
 
@@ -412,15 +412,15 @@ public class AccountControllerITest {
     @Test
     public void account_by_uuid_should_return_matching_account() throws Exception {
         final ResponseEntity<Account> entity = this.restClient.getForEntity(
-                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid,
+                "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid,
                 Account.class);
 
         assertEquals(HttpStatus.OK, entity.getStatusCode());
 
         final Account matchingAccount = entity.getBody();
-        assertEquals(RedisTestAccounts.existingAccount().uuid, matchingAccount.uuid);
-        assertEquals(RedisTestAccounts.existingAccount().name, matchingAccount.name);
-        assertEquals(RedisTestAccounts.existingAccount().mmaId, matchingAccount.mmaId);
+        assertEquals(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid, matchingAccount.uuid);
+        assertEquals(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().name, matchingAccount.name);
+        assertEquals(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().mmaId, matchingAccount.mmaId);
     }
 
     @Test
@@ -435,15 +435,15 @@ public class AccountControllerITest {
     @Test
     public void account_by_mma_id_should_return_matching_account() throws Exception {
         final ResponseEntity<Account> entity = this.restClient.getForEntity(
-                "http://localhost:" + this.port + "/accounts/mma/" + RedisTestAccounts.existingAccount().mmaId,
+                "http://localhost:" + this.port + "/accounts/mma/" + RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().mmaId,
                 Account.class);
 
         assertEquals(HttpStatus.OK, entity.getStatusCode());
 
         final Account matchingAccount = entity.getBody();
-        assertEquals(RedisTestAccounts.existingAccount().uuid, matchingAccount.uuid);
-        assertEquals(RedisTestAccounts.existingAccount().name, matchingAccount.name);
-        assertEquals(RedisTestAccounts.existingAccount().mmaId, matchingAccount.mmaId);
+        assertEquals(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().uuid, matchingAccount.uuid);
+        assertEquals(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().name, matchingAccount.name);
+        assertEquals(RedisTestAccounts.existingAccountWithoutSimsmeAccountRef().mmaId, matchingAccount.mmaId);
     }
 
     @Test

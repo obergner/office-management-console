@@ -53,7 +53,8 @@ public final class RedisAccountDao implements AccountDao {
                     AccountSchema.Fields.NAME,
                     AccountSchema.Fields.MMA_ID,
                     AccountSchema.Fields.CREATED_AT,
-                    AccountSchema.Fields.ALLOWED_OUT_CHANNELS);
+                    AccountSchema.Fields.ALLOWED_OUT_CHANNELS,
+                    AccountSchema.Fields.SIMSME_ACCOUNT_GUID);
             @SuppressWarnings("unchecked")
             final ArrayList<String> resultList = (ArrayList<String>) result;
             if (resultList.get(0) == null) {
@@ -64,7 +65,8 @@ public final class RedisAccountDao implements AccountDao {
             final long mma = Long.parseLong(resultList.get(2));
             final long createdAt = Long.parseLong(resultList.get(3));
             final String[] allowedOutChannels = resultList.get(4).split(",");
-            final Account account = new Account(accountUuid, name, mma, createdAt, allowedOutChannels);
+            final SimsmeGuid simsmeGuid = SimsmeGuid.parse(resultList.get(5));
+            final Account account = new Account(accountUuid, name, mma, createdAt, allowedOutChannels, simsmeGuid);
             this.log.debug("Successfully looked up account {}", account);
 
             return account;

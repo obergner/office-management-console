@@ -54,14 +54,21 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void accountByUuidShouldReturnExistingAccount() throws Exception {
-        final Account existingAccount = RedisTestAccounts.existingAccount();
+    public void account_by_uuid_should_return_existing_account_without_simsme_acccount_ref() throws Exception {
+        final Account existingAccount = RedisTestAccounts.existingAccountWithoutSimsmeAccountRef();
         final Account storedAccount = OBJECT_UNDER_TEST.accountByUuid(existingAccount.uuid);
         assertEquals(existingAccount, storedAccount);
     }
 
     @Test
-    public void accountByUuidShouldThrowExceptionWithProperCodeIfMatchingAccountDoesNotExist() throws Exception {
+    public void account_by_uuid_should_return_existing_account_with_simsme_account_ref() throws Exception {
+        final Account existingAccount = RedisTestAccounts.existingAccountWithSimsmeAccountRef();
+        final Account storedAccount = OBJECT_UNDER_TEST.accountByUuid(existingAccount.uuid);
+        assertEquals(existingAccount, storedAccount);
+    }
+
+    @Test
+    public void account_by_uuid_should_throw_exception_with_proper_code_if_matching_account_does_not_exist() throws Exception {
         try {
             OBJECT_UNDER_TEST.accountByUuid(UUID.randomUUID());
             fail("Expected JedisDataException to be thrown");
@@ -230,7 +237,7 @@ public class RedisAccountDaoTest {
 
     @Test
     public void delete_account_should_remove_matching_account_from_redis() throws Exception {
-        final Account existingAccount = RedisTestAccounts.existingAccount();
+        final Account existingAccount = RedisTestAccounts.existingAccountWithoutSimsmeAccountRef();
         OBJECT_UNDER_TEST.deleteAccount(existingAccount.uuid);
 
         final boolean accountStillStoredInRedis = EMBEDDED_REDIS_SERVER.client().hexists(AccountSchema.Keys.accountUuid(existingAccount.uuid), AccountSchema.Fields.UUID);
