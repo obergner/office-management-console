@@ -99,7 +99,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void createAccountShouldThrowExceptionWithProperCodeIfDuplicateAccountUuid() throws Exception {
+    public void create_account_should_throw_exception_with_proper_code_if_duplicate_account_uuid() throws Exception {
         try {
             final UUID duplicateUuid = UUID.randomUUID();
 
@@ -122,7 +122,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void createAccountShouldThrowExceptionWithProperCodeIfDuplicateMMA() throws Exception {
+    public void create_account_should_throw_exception_with_proper_code_if_duplicate_mma() throws Exception {
         try {
             final String firstAccountName = this.testName.getMethodName() + "_1";
             final String secondAccountName = this.testName.getMethodName() + "_2";
@@ -137,7 +137,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void updateAccountShouldUpdateAccountInRedis() throws Exception {
+    public void update_account_should_update_account_in_redis() throws Exception {
         final String originalAccountName = this.testName.getMethodName();
         final long originalMmaId = 4671234786554L;
         final String[] originalAllowedOutChannels = new String[]{"An_Out_Channel", "Another_Out_Channel"};
@@ -166,7 +166,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void updateAccountShouldCorrectlyUpdateMmaIndexIfMmaChanges() throws Exception {
+    public void update_account_should_correctly_update_mma_index_if_mma_changes() throws Exception {
         final String originalAccountName = this.testName.getMethodName();
         final long originalMmaId = 779561271234786554L;
         final String[] originalAllowedOutChannels = new String[]{"An_Out_Channel"};
@@ -197,7 +197,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void updateAccountShouldThrowExceptionWithProperCodeIfUpdatingNonExistingAccount() throws Exception {
+    public void update_account_should_throw_exception_with_proper_code_if_updating_non_existing_account() throws Exception {
         try {
             final Account updatedAccount = Account.newAccount("Updated name", 51234009873477L, RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS);
 
@@ -209,7 +209,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void updateAccountShouldThrowExceptionWithProperCodeIfAnotherAccountHasSameMmaId() throws Exception {
+    public void update_account_should_throw_exception_with_proper_code_if_another_account_has_same_mma_id() throws Exception {
         try {
             final long mmaUsedByAnotherAccount = 8916652434985633L;
 
@@ -229,7 +229,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void deleteAccountShouldRemoveMatchingAccountFromRedis() throws Exception {
+    public void delete_account_should_remove_matching_account_from_redis() throws Exception {
         final Account existingAccount = RedisTestAccounts.existingAccount();
         OBJECT_UNDER_TEST.deleteAccount(existingAccount.uuid);
 
@@ -241,7 +241,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void deleteAccountShouldThrowExceptionWithProperCodeIdDeletingNonExistingAccount() throws Exception {
+    public void delete_account_should_throw_exception_with_proper_code_id_deleting_non_existing_account() throws Exception {
         try {
             OBJECT_UNDER_TEST.deleteAccount(UUID.randomUUID());
             fail("Expected JedisDataException to be thrown");
@@ -251,7 +251,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void accountByMmaIdShouldReturnExistingAccount() throws Exception {
+    public void account_by_mma_id_should_return_existing_account() throws Exception {
         final String accountName = this.testName.getMethodName();
         final long mmaId = 2347812399675L;
         final String[] allowedOutChannels = new String[]{"Allowed_Out_Channel"};
@@ -263,7 +263,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void accountByMmaIdShouldThrowExceptionWithProperCodeIfMatchingAccountDoesNotExist() throws Exception {
+    public void account_by_mma_id_should_throw_exception_with_proper_code_if_matching_account_does_not_exist() throws Exception {
         try {
             final long mmaId = 73478123336721334L;
             OBJECT_UNDER_TEST.accountByMmaId(mmaId);
@@ -273,7 +273,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void allAccountsShouldReturnAllAccountsStoredInRedis() throws Exception {
+    public void all_accounts_should_return_all_accounts_stored_in_redis() throws Exception {
         final List<Account> storedAccounts = OBJECT_UNDER_TEST.allAccounts();
         assertEquals(RedisTestAccounts.ALL_ACCOUNTS.size(), storedAccounts.size());
     }

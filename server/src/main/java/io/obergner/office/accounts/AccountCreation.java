@@ -3,17 +3,74 @@ package io.obergner.office.accounts;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.obergner.office.accounts.subaccounts.simsme.CreateNewSimsmeAccountRefCreation;
+import io.obergner.office.accounts.subaccounts.simsme.ExistingSimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefCreation;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.Min;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class AccountCreation implements Serializable {
 
     private static final long serialVersionUID = -7668995662389526364L;
+
+    public static class Builder {
+
+        private String name;
+
+        private long mmaId;
+
+        private final List<String> allowedOutChannels = new ArrayList<>(5);
+
+        private SimsmeAccountRefCreation simsmeAccountRefCreation;
+
+        private Builder() {
+        }
+
+        public Builder withName(final String name) {
+            Assert.hasText(name, "Argument 'name' must neither be null nor blank");
+            this.name = name;
+            return this;
+        }
+
+        public Builder withMmaId(final long mmaId) {
+            this.mmaId = mmaId;
+            return this;
+        }
+
+        public Builder withAllowedOutChannels(final String... allowedOutChannels) {
+            Collections.addAll(this.allowedOutChannels, allowedOutChannels);
+            return this;
+        }
+
+        public Builder withReferenceToExistingSimsmeAccount(final SimsmeGuid existingSimsmeAccountGuid) {
+            Assert.notNull(existingSimsmeAccountGuid, "Argument 'existingSimsmeAccountGuid' must not be null");
+            this.simsmeAccountRefCreation = new ExistingSimsmeAccountRefCreation(existingSimsmeAccountGuid);
+            return this;
+        }
+
+        public Builder withReferenceToNewSimsmeAccount(final String simsmeAccountName,
+                                                       final String simsmeAccountImageBase64Jpeg) {
+            this.simsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation(simsmeAccountName, simsmeAccountImageBase64Jpeg);
+            return this;
+        }
+
+        public AccountCreation build() {
+            return new AccountCreation(this.name, this.mmaId, this.allowedOutChannels.toArray(new String[this.allowedOutChannels.size()]), this.simsmeAccountRefCreation);
+        }
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
 
     @NotEmpty(message = "{account.validation.name.not-empty.message}")
     @JsonProperty(value = "name", required = true)
@@ -29,12 +86,6 @@ public final class AccountCreation implements Serializable {
 
     @JsonProperty(value = "simsmeAccountRefCreation", required = false)
     public final SimsmeAccountRefCreation simsmeAccountRefCreation;
-
-    public AccountCreation(final String name,
-                           final long mmaId,
-                           final String[] allowedOutChannels) {
-        this(name, mmaId, allowedOutChannels, null);
-    }
 
     @JsonCreator
     public AccountCreation(final @JsonProperty("name") String name,

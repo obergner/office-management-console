@@ -6,12 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
-/**
- * Created by obergner on 01.11.14.
- */
+import java.net.URL;
+
 public class RedisScript extends ExternalResource {
 
-    public static final RedisScript named(final String scriptName, final Jedis redisClient) {
+    public static RedisScript named(final String scriptName, final Jedis redisClient) {
         return new RedisScript(scriptName, redisClient);
     }
 
@@ -37,10 +36,18 @@ public class RedisScript extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         this.log.info("Loading Redis Lua script '{}' ...", this.scriptName);
-        final String script = IOUtils.toString(getClass().getClassLoader().getResource("scripts/" + this.scriptName));
+        final String script = IOUtils.toString(loadScriptFromClasspath(this.scriptName));
         this.log.debug("Redis Lua script: {}", script);
         this.scriptHash = this.redisClient.scriptLoad(script);
         this.log.info("Redis Lua script '{}' successfully loaded - hash: {}", this.scriptName, this.scriptHash);
+    }
+
+    private URL loadScriptFromClasspath(final String scriptName) {
+        final URL resource = getClass().getClassLoader().getResource("scripts/" + scriptName);
+        if (resource == null) {
+            throw new IllegalArgumentException("Could not find script [" + scriptName + "] on classpath");
+        }
+        return resource;
     }
 
     @Override

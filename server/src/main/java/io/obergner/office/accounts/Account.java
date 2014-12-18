@@ -23,13 +23,13 @@ public final class Account implements Serializable {
     private static final String MALFORMED_UUID_ERROR_CODE = "api.error.account.malformed-uuid";
 
     public static Account newAccount(final String name, final long mmaId, final String[] allowedOutChannels) {
-        return newAccount(name, mmaId, allowedOutChannels, null);
+        return new Account(UUID.randomUUID(), name, mmaId, System.currentTimeMillis(), allowedOutChannels);
     }
 
-    public static Account newAccount(final String name,
-                                     final long mmaId,
-                                     final String[] allowedOutChannels,
-                                     final SimsmeGuid simsmeGuid) {
+    public static Account newAccountWithReferenceToExistingSimsmeAccount(final String name,
+                                                                         final long mmaId,
+                                                                         final String[] allowedOutChannels,
+                                                                         final SimsmeGuid simsmeGuid) {
         return new Account(UUID.randomUUID(), name, mmaId, System.currentTimeMillis(), allowedOutChannels, simsmeGuid);
     }
 

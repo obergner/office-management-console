@@ -87,7 +87,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void indexShouldReturnAllAccountsStoredInRedis() throws Exception {
+    public void index_should_return_all_accounts_stored_in_redis() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
@@ -103,7 +103,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void createAccountShouldReturnCreatedAccountAndStoreItInRedis() throws Exception {
+    public void create_account_should_return_created_account_and_store_it_in_redis() throws Exception {
         final String newAccountName = this.testName.getMethodName();
         final long newAccountMmaId = 783561234L;
         final CreateAccount request = new CreateAccount(newAccountName, newAccountMmaId, RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS);
@@ -123,7 +123,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void createAccountShouldReturnErrorResponseIfNewAccountHasDuplicateMmaId() throws Exception {
+    public void create_account_should_return_error_response_if_new_account_has_duplicate_mma_id() throws Exception {
         final String newAccountName = this.testName.getMethodName();
         final long duplicateMmaId = RedisTestAccounts.existingAccount().mmaId;
         final CreateAccount request = new CreateAccount(newAccountName, duplicateMmaId, RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS);
@@ -142,7 +142,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void createAccountShouldReturnErrorResponseIfNewAccountHasEmptyName() throws Exception {
+    public void create_account_should_return_error_response_if_new_account_has_empty_name() throws Exception {
         final String newAccountName = "";
         final CreateAccount request = new CreateAccount(newAccountName, 111111111111111L, RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS);
 
@@ -160,7 +160,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void createAccountShouldReturnErrorResponseIfNewAccountHasNonPositiveMmaId() throws Exception {
+    public void create_account_should_return_error_response_if_new_account_has_non_positive_mma_id() throws Exception {
         final String newAccountName = this.testName.getMethodName();
         final CreateAccount request = new CreateAccount(newAccountName, 0L, RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS);
 
@@ -178,7 +178,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void createAccountShouldReturnErrorResponseIfNewAccountHasNoAllowedOutChannels() throws Exception {
+    public void create_account_should_return_error_response_if_new_account_has_no_allowed_out_channels() throws Exception {
         final String newAccountName = this.testName.getMethodName();
         final CreateAccount request = new CreateAccount(newAccountName, 2222222222222L, new String[0]);
 
@@ -196,7 +196,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void updateAccountShouldReturnUpdatedAccountAndUpdateItInRedis() throws Exception {
+    public void update_account_should_return_updated_account_and_update_it_in_redis() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -230,7 +230,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void updateAccountShouldReturnNotFoundIfUpdatingANonExistentAccount() throws Exception {
+    public void update_account_should_return_not_found_if_updating_a_non_existent_account() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -250,7 +250,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void updateAccountShouldReturnErrorResponseIfUpdatedAccountHasEmptyName() throws Exception {
+    public void update_account_should_return_error_response_if_updated_account_has_empty_name() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -282,7 +282,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void updateAccountShouldReturnErrorResponseIfUpdatedAccountHasNonPositiveMmaId() throws Exception {
+    public void update_account_should_return_error_response_if_updated_account_has_non_positive_mma_id() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -314,7 +314,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void updateAccountShouldReturnErrorResponseIfUpdatedAccountHasNoAllowedOutChannels() throws Exception {
+    public void update_account_should_return_error_response_if_updated_account_has_no_allowed_out_channels() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -346,7 +346,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void updateAccountShouldReturnErrorResponseIfAccountToUpdateContainsMalformedUuid() throws Exception {
+    public void update_account_should_return_error_response_if_account_to_update_contains_malformed_uuid() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -363,7 +363,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void deleteAccountShouldSuccessfullyDeleteExistingAccount() throws Exception {
+    public void delete_account_should_successfully_delete_existing_account() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
@@ -382,7 +382,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void deleteAccountShouldReturnNotFoundForNonExistingAccount() throws Exception {
+    public void delete_account_should_return_not_found_for_non_existing_account() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
@@ -396,7 +396,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void deleteAccountShouldReturnApiValidationIfPassingAMalformedUuid() throws Exception {
+    public void delete_account_should_return_api_validation_if_passing_a_malformed_uuid() throws Exception {
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
@@ -410,7 +410,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void accountByUuidShouldReturnMatchingAccount() throws Exception {
+    public void account_by_uuid_should_return_matching_account() throws Exception {
         final ResponseEntity<Account> entity = this.restClient.getForEntity(
                 "http://localhost:" + this.port + "/accounts/uuid/" + RedisTestAccounts.existingAccount().uuid,
                 Account.class);
@@ -424,7 +424,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void accountByUuidShouldReturnHttpStatusNotFoundIfNoMatchingAccountCouldBeFound() throws Exception {
+    public void account_by_uuid_should_return_http_status_not_found_if_no_matching_account_could_be_found() throws Exception {
         final ResponseEntity<String> entity = this.restClient.getForEntity(
                 "http://localhost:" + this.port + "/accounts/uuid/" + UUID.randomUUID().toString(),
                 String.class);
@@ -433,7 +433,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void accountByMmaIdShouldReturnMatchingAccount() throws Exception {
+    public void account_by_mma_id_should_return_matching_account() throws Exception {
         final ResponseEntity<Account> entity = this.restClient.getForEntity(
                 "http://localhost:" + this.port + "/accounts/mma/" + RedisTestAccounts.existingAccount().mmaId,
                 Account.class);
@@ -447,7 +447,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void accountByMmaIdShouldReturnHttpStatusNotFoundIfNoMatchingAccountCouldBeFound() throws Exception {
+    public void account_by_mma_id_should_return_http_status_not_found_if_no_matching_account_could_be_found() throws Exception {
         final ResponseEntity<String> entity = this.restClient.getForEntity(
                 "http://localhost:" + this.port + "/accounts/mma/" + 12345111111L,
                 String.class);

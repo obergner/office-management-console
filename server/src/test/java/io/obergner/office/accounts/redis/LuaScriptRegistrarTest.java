@@ -19,7 +19,7 @@ public class LuaScriptRegistrarTest {
     public static final EmbeddedRedisServer EMBEDDED_REDIS_SERVER = EmbeddedRedisServer.listenOnPort(REDIS_PORT);
 
     @Test
-    public void shouldSuccessfullyRegisterAllScripts() throws IOException {
+    public void should_successfully_register_all_scripts() throws IOException {
         final JedisPool redisClientPool = new JedisPool(new JedisPoolConfig(), "127.0.0.1", REDIS_PORT);
         final LuaScriptRegistrar objectUnderTest = new LuaScriptRegistrar(redisClientPool);
 

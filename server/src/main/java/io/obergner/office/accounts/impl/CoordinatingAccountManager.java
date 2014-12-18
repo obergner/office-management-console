@@ -67,7 +67,7 @@ public class CoordinatingAccountManager implements AccountManager {
         notNull(accountCreation, "Argument 'accountCreation' must not be null");
         this.log.info("Creating account using {} ...", accountCreation);
         final SimsmeGuid simsmeAccountRef = createOrReferenceSimsmeSubaccountIfNecessary(accountCreation);
-        final Account accountToStore = Account.newAccount(accountCreation.name, accountCreation.mmaId, accountCreation.allowedOutChannels, simsmeAccountRef);
+        final Account accountToStore = Account.newAccountWithReferenceToExistingSimsmeAccount(accountCreation.name, accountCreation.mmaId, accountCreation.allowedOutChannels, simsmeAccountRef);
         final Account createdAccount = this.accountDao.createAccount(accountToStore);
         this.log.info("Successfully created {}", createdAccount);
         return createdAccount;

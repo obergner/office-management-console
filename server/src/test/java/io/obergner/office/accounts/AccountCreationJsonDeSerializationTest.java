@@ -18,7 +18,11 @@ public class AccountCreationJsonDeSerializationTest {
         final String expectedName = "expectedName";
         final int expectedMmaId = 1232234;
         final String[] expectedAllowedOutChannel = new String[]{"channel1", "channel2"};
-        final AccountCreation expectedAccountCreation = new AccountCreation(expectedName, expectedMmaId, expectedAllowedOutChannel);
+        final AccountCreation expectedAccountCreation = AccountCreation.newBuilder()
+                .withName(expectedName)
+                .withMmaId(expectedMmaId)
+                .withAllowedOutChannels(expectedAllowedOutChannel)
+                .build();
 
         final String jsonRepresentation = "{\"name\":\"" + expectedName +
                 "\",\"mmaId\":" + expectedMmaId +
@@ -34,7 +38,11 @@ public class AccountCreationJsonDeSerializationTest {
         final String expectedName = "expectedName";
         final int expectedMmaId = 1232234;
         final String[] expectedAllowedOutChannel = new String[]{"channel1", "channel2"};
-        final AccountCreation expectedAccountCreation = new AccountCreation(expectedName, expectedMmaId, expectedAllowedOutChannel);
+        final AccountCreation expectedAccountCreation = AccountCreation.newBuilder()
+                .withName(expectedName)
+                .withMmaId(expectedMmaId)
+                .withAllowedOutChannels(expectedAllowedOutChannel)
+                .build();
         final String expectedJsonRepresentation = "{\"name\":\"" + expectedName +
                 "\",\"mmaId\":" + expectedMmaId +
                 ",\"allowedOutChannels\":[\"" + expectedAllowedOutChannel[0] + "\",\"" + expectedAllowedOutChannel[1] + "\"]}";
@@ -48,7 +56,12 @@ public class AccountCreationJsonDeSerializationTest {
     @Test
     public void should_correctly_deserialze_AccountCreation_with_CreateNewSimmseAccountRefCreation() throws IOException {
         final CreateNewSimsmeAccountRefCreation expectedCreateNewSimsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation("simsmeAccountName", "simsmeAccountImage");
-        final AccountCreation expectedAccountCreation = new AccountCreation("expectedName", 1232234, new String[]{"channel1", "channel2"}, expectedCreateNewSimsmeAccountRefCreation);
+        final AccountCreation expectedAccountCreation = AccountCreation.newBuilder()
+                .withName("expectedName")
+                .withMmaId(7823417654L)
+                .withAllowedOutChannels("channel1", "channel2")
+                .withReferenceToNewSimsmeAccount(expectedCreateNewSimsmeAccountRefCreation.name, expectedCreateNewSimsmeAccountRefCreation.imageBase64Jpeg)
+                .build();
 
         final String jsonRepresentation = "{\"name\":\"" + expectedAccountCreation.name +
                 "\",\"mmaId\":" + expectedAccountCreation.mmaId +
@@ -65,7 +78,12 @@ public class AccountCreationJsonDeSerializationTest {
     @Test
     public void should_correctly_serialze_AccountCreation_with_CreateNewSimmseAccountRefCreation() throws IOException {
         final CreateNewSimsmeAccountRefCreation createNewSimsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation("simsmeAccountName", "simsmeAccountImage");
-        final AccountCreation accountCreation = new AccountCreation("expectedName", 1232234, new String[]{"channel1", "channel2"}, createNewSimsmeAccountRefCreation);
+        final AccountCreation accountCreation = AccountCreation.newBuilder()
+                .withName("expectedName")
+                .withMmaId(7823417654L)
+                .withAllowedOutChannels("channel1", "channel2")
+                .withReferenceToNewSimsmeAccount(createNewSimsmeAccountRefCreation.name, createNewSimsmeAccountRefCreation.imageBase64Jpeg)
+                .build();
 
         final String expectedJsonRepresentation = "{\"name\":\"" + accountCreation.name +
                 "\",\"mmaId\":" + accountCreation.mmaId +

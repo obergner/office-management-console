@@ -13,13 +13,11 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
-/**
- * Created by obergner on 01.11.14.
- */
 public class RedisExplorationTest {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -41,7 +39,7 @@ public class RedisExplorationTest {
     }
 
     @Test
-    public void shouldStoreSimpleKeyValuePairInRedis() {
+    public void should_store_simple_key_value_pair_in_redis() {
         final String accountId = UUID.randomUUID().toString();
 
         final Jedis redisClient = EMBEDDED_REDIS_SERVER.client();
@@ -55,8 +53,8 @@ public class RedisExplorationTest {
     }
 
     @Test
-    public void shouldSuccessfullyLoadCreateAccountLuaScript() throws IOException {
-        final String createAccountScript = IOUtils.toString(getClass().getClassLoader().getResource("scripts/test-create-account.lua"));
+    public void should_successfully_load_create_account_lua_script() throws IOException {
+        final String createAccountScript = IOUtils.toString(loadScriptFromClasspath("test-create-account.lua"));
 
         final String scriptSha = EMBEDDED_REDIS_SERVER.client().scriptLoad(createAccountScript);
         log.info("CREATE-SCRIPT-SHA: {}", scriptSha);
@@ -64,9 +62,17 @@ public class RedisExplorationTest {
         Assert.assertNotNull(scriptSha);
     }
 
+    private URL loadScriptFromClasspath(final String scriptName) {
+        final URL resource = getClass().getClassLoader().getResource("scripts/" + scriptName);
+        if (resource == null) {
+            throw new IllegalArgumentException("Could not find script [" + scriptName + "] on classpath");
+        }
+        return resource;
+    }
+
     @Test
-    public void shouldSuccessfullyLoadGetAccountLuaScript() throws IOException {
-        final String createAccountScript = IOUtils.toString(getClass().getClassLoader().getResource("scripts/test-get-account.lua"));
+    public void should_successfully_load_get_account_lua_script() throws IOException {
+        final String createAccountScript = IOUtils.toString(loadScriptFromClasspath("test-get-account.lua"));
 
         final String scriptSha = EMBEDDED_REDIS_SERVER.client().scriptLoad(createAccountScript);
         log.info("GET-SCRIPT-SHA: {}", scriptSha);
@@ -75,14 +81,14 @@ public class RedisExplorationTest {
     }
 
     @Test(expected = JedisDataException.class)
-    public void shouldRecognizeBrokenLuaScript() throws IOException {
+    public void should_recognize_broken_lua_script() throws IOException {
         final String brokenScript = "return GARBAGE///";
 
         EMBEDDED_REDIS_SERVER.client().scriptLoad(brokenScript);
     }
 
     @Test
-    public void shouldSuccessfullyCreateNewAccount() throws IOException {
+    public void should_successfully_create_new_account() throws IOException {
         final String accountUuid = UUID.randomUUID().toString();
         final String accountName = "ACCOUNT:" + accountUuid;
         final String mmaId = String.valueOf(123456789L);
@@ -96,7 +102,7 @@ public class RedisExplorationTest {
     }
 
     @Test
-    public void shouldUpdateSecondaryMMAIndexWhenCreatingNewAccount() throws IOException {
+    public void should_update_secondary_m_m_a_index_when_creating_new_account() throws IOException {
         final String accountUuid = UUID.randomUUID().toString();
         final String accountName = "ACCOUNT:" + accountUuid;
         final String mmaId = String.valueOf(12345678912345L);
@@ -110,7 +116,7 @@ public class RedisExplorationTest {
     }
 
     @Test
-    public void shouldReturnAllAccounts() throws IOException {
+    public void should_return_all_accounts() throws IOException {
         final String firstAccountUuid = UUID.randomUUID().toString();
         final String firstAccountName = "ACCOUNT:" + firstAccountUuid;
         final String firstMmaId = String.valueOf(123456789L);
