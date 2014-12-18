@@ -8,7 +8,6 @@ import io.obergner.office.accounts.subaccounts.simsme.ExistingSimsmeAccountRefCr
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.util.Assert;
 
 import javax.validation.constraints.Min;
 import java.io.Serializable;
@@ -16,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class AccountCreation implements Serializable {
@@ -36,7 +39,7 @@ public final class AccountCreation implements Serializable {
         }
 
         public Builder withName(final String name) {
-            Assert.hasText(name, "Argument 'name' must neither be null nor blank");
+            hasText(name, "Argument 'name' must neither be null nor blank");
             this.name = name;
             return this;
         }
@@ -52,13 +55,15 @@ public final class AccountCreation implements Serializable {
         }
 
         public Builder withReferenceToExistingSimsmeAccount(final SimsmeGuid existingSimsmeAccountGuid) {
-            Assert.notNull(existingSimsmeAccountGuid, "Argument 'existingSimsmeAccountGuid' must not be null");
+            notNull(existingSimsmeAccountGuid, "Argument 'existingSimsmeAccountGuid' must not be null");
+            isTrue(this.simsmeAccountRefCreation == null, "SimsmeAccountRefCreation has already been set");
             this.simsmeAccountRefCreation = new ExistingSimsmeAccountRefCreation(existingSimsmeAccountGuid);
             return this;
         }
 
         public Builder withReferenceToNewSimsmeAccount(final String simsmeAccountName,
                                                        final String simsmeAccountImageBase64Jpeg) {
+            isTrue(this.simsmeAccountRefCreation == null, "SimsmeAccountRefCreation has already been set");
             this.simsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation(simsmeAccountName, simsmeAccountImageBase64Jpeg);
             return this;
         }

@@ -2,6 +2,7 @@ package io.obergner.office.accounts;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.obergner.office.ApiError;
 import io.obergner.office.ApiErrorCode;
 import io.obergner.office.Application;
@@ -117,9 +118,9 @@ public class AccountControllerITest {
                 .withReferenceToExistingSimsmeAccount(refToExistingSimsmeAccount)
                 .build();
 
-        final ResponseEntity<Account> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
                 request,
-                Account.class);
+                String.class);
 
         assertEquals(HttpStatus.CREATED, entity.getStatusCode());
 
@@ -144,9 +145,9 @@ public class AccountControllerITest {
                 .withReferenceToNewSimsmeAccount("New SIMSme account", "78ehhggdd")
                 .build();
 
-        final ResponseEntity<Account> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
                 request,
-                Account.class);
+                String.class);
 
         assertEquals(HttpStatus.CREATED, entity.getStatusCode());
 
@@ -158,6 +159,110 @@ public class AccountControllerITest {
 
         final boolean accountHasBeenStored = this.redisClient.hexists(AccountSchema.Keys.accountUuid(newAccountUuid), AccountSchema.Fields.UUID);
         assertTrue(accountHasBeenStored);
+    }
+
+    @Test
+    public void post_account_creation_should_return_error_response_if_new_account_has_duplicate_mma_id() throws Exception {
+        final String newAccountName = this.testName.getMethodName();
+        final long newAccountMmaId = RedisTestAccounts.existingAccountWithSimsmeAccountRef().mmaId;
+        final AccountCreation request = AccountCreation.newBuilder()
+                .withName(newAccountName)
+                .withMmaId(newAccountMmaId)
+                .withAllowedOutChannels(RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS)
+                .withReferenceToNewSimsmeAccount("New SIMSme account", "78ehhggdd")
+                .build();
+
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+                request,
+                String.class);
+
+        assertEquals(HttpStatus.CONFLICT, entity.getStatusCode());
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode jsonResponse = mapper.readTree(entity.getBody());
+        final JsonNode responseStatus = jsonResponse.path("status");
+        final JsonNode responseCode = jsonResponse.path("code");
+
+        assertEquals(HttpStatus.CONFLICT.value(), responseStatus.asInt());
+        assertEquals(ApiErrorCode.DUPLICATE_ACCOUNT_MMAID, responseCode.asText());
+    }
+
+    @Test
+    public void post_account_creation_should_return_error_response_if_new_account_has_empty_name() throws Exception {
+        final long newAccountMmaId = 77000888L;
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode tree = mapper.createObjectNode();
+        tree.put("name", "").put("mmaId", newAccountMmaId).putArray("allowedOutChannels").add("NewOutChannel1");
+        final String request = mapper.writeValueAsString(tree);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final ResponseEntity<String> entity = this.restClient.exchange("http://localhost:" + this.port + "/accounts/creations",
+                HttpMethod.POST,
+                new HttpEntity<>(request, headers),
+                String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+
+        final JsonNode jsonResponse = mapper.readTree(entity.getBody());
+        final JsonNode responseStatus = jsonResponse.path("status");
+        final JsonNode responseCode = jsonResponse.path("code");
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), responseStatus.asInt());
+        assertEquals(ApiErrorCode.MALFORMED_REQUEST, responseCode.asText());
+    }
+
+    @Test
+    public void post_account_creation_should_return_error_response_if_new_account_has_non_positive_mma_id() throws Exception {
+        final String newAccountName = this.testName.getMethodName();
+        final long newAccountMmaId = 0L;
+        final AccountCreation request = AccountCreation.newBuilder()
+                .withName(newAccountName)
+                .withMmaId(newAccountMmaId)
+                .withAllowedOutChannels(RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS)
+                .withReferenceToNewSimsmeAccount("New SIMSme account", "78ehhggdd")
+                .build();
+
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+                request,
+                String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode jsonResponse = mapper.readTree(entity.getBody());
+        final JsonNode responseStatus = jsonResponse.path("status");
+        final JsonNode responseCode = jsonResponse.path("code");
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), responseStatus.asInt());
+        assertEquals(ApiErrorCode.MALFORMED_REQUEST, responseCode.asText());
+    }
+
+    @Test
+    public void post_account_creation_should_return_error_response_if_new_account_has_no_allowed_out_channels() throws Exception {
+        final String newAccountName = this.testName.getMethodName();
+        final long newAccountMmaId = 1234166734222L;
+        final AccountCreation request = AccountCreation.newBuilder()
+                .withName(newAccountName)
+                .withMmaId(newAccountMmaId)
+                .withAllowedOutChannels()
+                .withReferenceToNewSimsmeAccount("New SIMSme account", "78ehhggdd")
+                .build();
+
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+                request,
+                String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode jsonResponse = mapper.readTree(entity.getBody());
+        final JsonNode responseStatus = jsonResponse.path("status");
+        final JsonNode responseCode = jsonResponse.path("code");
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), responseStatus.asInt());
+        assertEquals(ApiErrorCode.MALFORMED_REQUEST, responseCode.asText());
     }
 
     @Test
