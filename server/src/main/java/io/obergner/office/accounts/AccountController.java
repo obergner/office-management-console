@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,11 +40,11 @@ public class AccountController {
         return this.accountManager.createAccount(newAccount.name, newAccount.mmaId, newAccount.allowedOutChannels);
     }
 
-    @RequestMapping(value = "/creations", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> postAccountCreation(@RequestBody @Valid final CreateAccount newAccount) {
+    @RequestMapping(value = "/creations", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> postAccountCreation(@RequestBody @Valid final AccountCreation accountCreation) {
+        final Account createdAccount = this.accountManager.createAccount(accountCreation);
         final ResponseEntity<Void> result = new ResponseEntity<>(HttpStatus.CREATED);
-        result.getHeaders().setLocation(null);
+        result.getHeaders().setLocation(URI.create("/accounts/" + createdAccount.uuid.toString()));
         return result;
     }
 

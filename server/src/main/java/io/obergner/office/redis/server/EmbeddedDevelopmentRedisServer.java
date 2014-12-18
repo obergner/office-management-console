@@ -4,6 +4,7 @@ import io.obergner.office.accounts.Account;
 import io.obergner.office.accounts.redis.AccountSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.embedded.RedisServer;
 
@@ -47,7 +48,7 @@ public class EmbeddedDevelopmentRedisServer {
                             accMap.put(AccountSchema.Fields.NAME, account.name);
                             accMap.put(AccountSchema.Fields.MMA_ID, String.valueOf(account.mmaId));
                             accMap.put(AccountSchema.Fields.CREATED_AT, String.valueOf(account.createdAt));
-                            accMap.put(AccountSchema.Fields.ALLOWED_OUT_CHANNELS, account.allowedOutChannelsConcat());
+                            accMap.put(AccountSchema.Fields.ALLOWED_OUT_CHANNELS, StringUtils.arrayToCommaDelimitedString(account.allowedOutChannels));
                             redisClient.hmset(AccountSchema.Keys.accountUuid(account.uuid), accMap);
                             redisClient.hset(AccountSchema.Keys.ACCOUNT_MMA_INDEX, String.valueOf(account.mmaId), account.uuid.toString());
                         });

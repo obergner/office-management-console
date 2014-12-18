@@ -111,17 +111,6 @@ public final class Account implements Serializable {
         this.simsmeAccountRef = simsmeAccountRef;
     }
 
-    public String allowedOutChannelsConcat() {
-        final StringBuilder result = new StringBuilder();
-        for (final String ch : this.allowedOutChannels) {
-            result.append(ch).append(',');
-        }
-        if (result.length() > 0) {
-            result.deleteCharAt(result.length() - 1);
-        }
-        return result.toString();
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

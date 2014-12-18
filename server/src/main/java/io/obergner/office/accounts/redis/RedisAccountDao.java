@@ -6,6 +6,7 @@ import io.obergner.office.accounts.AccountDao;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -90,9 +91,10 @@ public final class RedisAccountDao implements AccountDao {
             this.log.debug("Creating [{}] ...", newAccount);
             redisClient = this.redisClientPool.getResource();
             final String optionalSimsmeAccountGuid = newAccount.simsmeAccountRef.simsmeGuid().map(SimsmeGuid::toString).orElse(AccountSchema.NULL_VALUE);
+            final String allowedOutChannelsConcat = StringUtils.arrayToCommaDelimitedString(newAccount.allowedOutChannels);
             redisClient.evalsha(this.scriptHandles.createAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
-                    Arrays.asList(newAccount.uuid.toString(), newAccount.name, String.valueOf(newAccount.mmaId), String.valueOf(newAccount.createdAt), newAccount.allowedOutChannelsConcat(), optionalSimsmeAccountGuid));
+                    Arrays.asList(newAccount.uuid.toString(), newAccount.name, String.valueOf(newAccount.mmaId), String.valueOf(newAccount.createdAt), allowedOutChannelsConcat, optionalSimsmeAccountGuid));
             this.log.debug("Successfully created new {}", newAccount);
 
             return newAccount;
@@ -112,7 +114,7 @@ public final class RedisAccountDao implements AccountDao {
             redisClient = this.redisClientPool.getResource();
             redisClient.evalsha(this.scriptHandles.updateAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
-                    Arrays.asList(account.uuid.toString(), account.name, String.valueOf(account.mmaId), account.allowedOutChannelsConcat()));
+                    Arrays.asList(account.uuid.toString(), account.name, String.valueOf(account.mmaId), StringUtils.arrayToCommaDelimitedString(account.allowedOutChannels)));
             this.log.debug("Successfully updated {}", account);
 
             return account;
