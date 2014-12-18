@@ -134,6 +134,33 @@ public class AccountControllerITest {
     }
 
     @Test
+    public void post_account_creation_should_store_account_with_reference_to_new_simsme_account_in_redis() throws Exception {
+        final String newAccountName = this.testName.getMethodName();
+        final long newAccountMmaId = 7835612111L;
+        final AccountCreation request = AccountCreation.newBuilder()
+                .withName(newAccountName)
+                .withMmaId(newAccountMmaId)
+                .withAllowedOutChannels(RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS)
+                .withReferenceToNewSimsmeAccount("New SIMSme account", "78ehhggdd")
+                .build();
+
+        final ResponseEntity<Account> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+                request,
+                Account.class);
+
+        assertEquals(HttpStatus.CREATED, entity.getStatusCode());
+
+        final URI location = entity.getHeaders().getLocation();
+        assertNotNull(location);
+
+        final String locationPath = location.getPath();
+        final String newAccountUuid = locationPath.substring(locationPath.lastIndexOf("/") + 1);
+
+        final boolean accountHasBeenStored = this.redisClient.hexists(AccountSchema.Keys.accountUuid(newAccountUuid), AccountSchema.Fields.UUID);
+        assertTrue(accountHasBeenStored);
+    }
+
+    @Test
     public void create_account_should_return_created_account_and_store_it_in_redis() throws Exception {
         final String newAccountName = this.testName.getMethodName();
         final long newAccountMmaId = 783561234L;
