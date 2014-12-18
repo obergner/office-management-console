@@ -44,7 +44,7 @@ public class AccountController {
     public ResponseEntity<Void> postAccountCreation(@RequestBody @Valid final AccountCreation accountCreation) {
         final Account createdAccount = this.accountManager.createAccount(accountCreation);
         final ResponseEntity<Void> result = new ResponseEntity<>(HttpStatus.CREATED);
-        result.getHeaders().setLocation(URI.create("/accounts/" + createdAccount.uuid.toString()));
+        result.getHeaders().setLocation(URI.create("/accounts/uuid/" + createdAccount.uuid.toString()));
         return result;
     }
 
