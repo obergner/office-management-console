@@ -1,5 +1,6 @@
 package io.obergner.office.accounts;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,9 @@ public class AccountController {
     @RequestMapping(value = "/creations", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> postAccountCreation(@RequestBody @Valid final AccountCreation accountCreation) {
         final Account createdAccount = this.accountManager.createAccount(accountCreation);
-        final ResponseEntity<Void> result = new ResponseEntity<>(HttpStatus.CREATED);
-        result.getHeaders().setLocation(URI.create("/accounts/uuid/" + createdAccount.uuid.toString()));
-        return result;
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(URI.create("/accounts/uuid/" + createdAccount.uuid.toString()));
+        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/uuid/{uuid}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

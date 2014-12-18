@@ -7,6 +7,7 @@ import io.obergner.office.ApiErrorCode;
 import io.obergner.office.Application;
 import io.obergner.office.Profiles;
 import io.obergner.office.accounts.redis.AccountSchema;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import io.obergner.office.test.RedisTestAccounts;
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +43,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -100,6 +103,34 @@ public class AccountControllerITest {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
 
         assertEquals(RedisTestAccounts.ALL_ACCOUNTS.size(), entity.getBody().size());
+    }
+
+    @Test
+    public void post_account_creation_should_store_account_with_reference_to_existing_simsme_account_in_redis() throws Exception {
+        final String newAccountName = this.testName.getMethodName();
+        final long newAccountMmaId = 783561234L;
+        final SimsmeGuid refToExistingSimsmeAccount = new SimsmeGuid(0, UUID.randomUUID());
+        final AccountCreation request = AccountCreation.newBuilder()
+                .withName(newAccountName)
+                .withMmaId(newAccountMmaId)
+                .withAllowedOutChannels(RedisTestAccounts.ALL_ALLOWED_OUT_CHANNELS)
+                .withReferenceToExistingSimsmeAccount(refToExistingSimsmeAccount)
+                .build();
+
+        final ResponseEntity<Account> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+                request,
+                Account.class);
+
+        assertEquals(HttpStatus.CREATED, entity.getStatusCode());
+
+        final URI location = entity.getHeaders().getLocation();
+        assertNotNull(location);
+
+        final String locationPath = location.getPath();
+        final String newAccountUuid = locationPath.substring(locationPath.lastIndexOf("/") + 1);
+
+        final boolean accountHasBeenStored = this.redisClient.hexists(AccountSchema.Keys.accountUuid(newAccountUuid), AccountSchema.Fields.UUID);
+        assertTrue(accountHasBeenStored);
     }
 
     @Test
