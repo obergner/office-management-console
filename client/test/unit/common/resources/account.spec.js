@@ -63,7 +63,7 @@ describe('resource: Account', function () {
         createdAccount.name = accountToCreate.name;
         createdAccount.mmaId = accountToCreate.mmaId;
 
-        $httpBackend.expect('POST', '/accounts').respond(201, angular.toJson(createdAccount));
+        $httpBackend.expect('POST', '/accounts/creations').respond(201, angular.toJson(createdAccount));
         accountToCreate.$save();
         $httpBackend.flush();
     });

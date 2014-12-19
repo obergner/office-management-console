@@ -10,7 +10,7 @@ angular.module('resources.account', ['ngResource'])
         },
         save: {
             method: 'POST',
-            url: '/accounts'
+            url: '/accounts/creations'
         },
         update: {
             method: 'PUT',

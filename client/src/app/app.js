@@ -30,6 +30,8 @@ angular.module('app').config(['$urlRouterProvider', 'uiSelectConfig', 'growlProv
     $urlRouterProvider.otherwise('/accounts');
     uiSelectConfig.theme = 'bootstrap';
     growlProvider.globalTimeToLive(5000);
+    growlProvider.globalDisableCountDown(true);
+    growlProvider.globalDisableIcons(true);
 }]);
 
 angular.module('app').controller('AppCtrl', ['$scope', 'growl', 'localizedMessages', function($scope, growl, localizedMessages) {
