@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class CreateNewSimsmeAccountRefCreation extends SimsmeAccountRefCreation {
 
+    private static final long serialVersionUID = 5564700480889068139L;
+
     @JsonProperty(value = "name", required = false)
     public final String name;
 
@@ -26,13 +28,14 @@ public final class CreateNewSimsmeAccountRefCreation extends SimsmeAccountRefCre
 
         final CreateNewSimsmeAccountRefCreation that = (CreateNewSimsmeAccountRefCreation) o;
 
-        return imageBase64Jpeg.equals(that.imageBase64Jpeg) && name.equals(that.name);
+        return !(imageBase64Jpeg != null ? !imageBase64Jpeg.equals(that.imageBase64Jpeg) : that.imageBase64Jpeg != null) && !(name != null ? !name.equals(that.name) : that.name != null);
+
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + imageBase64Jpeg.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (imageBase64Jpeg != null ? imageBase64Jpeg.hashCode() : 0);
         return result;
     }
 

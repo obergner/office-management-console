@@ -12,12 +12,15 @@ import java.io.Serializable;
 
 import static org.springframework.util.Assert.notNull;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "action")
 @JsonTypeIdResolver(SimsmeAccountRefCreation.SimsmeAccountRefCreationTypeIdResolver.class)
 public abstract class SimsmeAccountRefCreation implements Serializable {
 
     public enum Action {
+
+        none,
+
         referenceExisting,
 
         createNew
@@ -62,6 +65,8 @@ public abstract class SimsmeAccountRefCreation implements Serializable {
         public JavaType typeFromId(final String id) {
             final Action action = Action.valueOf(id);
             switch (action) {
+                case none:
+                    return TypeFactory.defaultInstance().constructSpecializedType(this.baseType, NoneSimsmeAccountRefCreation.class);
                 case referenceExisting:
                     return TypeFactory.defaultInstance().constructSpecializedType(this.baseType, ExistingSimsmeAccountRefCreation.class);
                 case createNew:

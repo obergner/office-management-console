@@ -105,8 +105,26 @@ angular.module('accounts', [
         $scope.alerts = [];
         $scope.availableOutChannels = AccountSettings.outChannels;
 
+        $scope.usesCustomSimsmeAccountName = false;
+
         $scope.dismissAlert = function() {
             $scope.alerts.length = 0;
+        };
+
+        $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
+            if (outChannel === 'SIMSme') {
+                $scope.newAccount.requireSimsmeSubaccount();
+            }
+        };
+
+        $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
+            if (outChannel === 'SIMSme') {
+                $scope.newAccount.unrequireSimsmeSubaccount();
+            }
+        };
+
+        $scope.onSimsmeAccountNameInputDoubleClicked = function() {
+            $scope.usesCustomSimsmeAccountName = true;
         };
 
         $scope.ok = function () {

@@ -45,7 +45,8 @@ public class AccountCreationJsonDeSerializationTest {
                 .build();
         final String expectedJsonRepresentation = "{\"name\":\"" + expectedName +
                 "\",\"mmaId\":" + expectedMmaId +
-                ",\"allowedOutChannels\":[\"" + expectedAllowedOutChannel[0] + "\",\"" + expectedAllowedOutChannel[1] + "\"]}";
+                ",\"allowedOutChannels\":[\"" + expectedAllowedOutChannel[0] + "\",\"" + expectedAllowedOutChannel[1] + "\"]"
+                + ",\"simsmeAccountRefCreation\":{\"action\":\"none\"}}";
 
         final StringWriter actualJsonRepresentation = new StringWriter();
         OBJECT_MAPPER.writeValue(actualJsonRepresentation, expectedAccountCreation);

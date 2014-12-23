@@ -4,11 +4,11 @@ describe('resource: Account', function () {
     var Account;
 
     var allAccounts = [
-        { uuid: '789665-65432-78944', name: 'First Office Account', mmaId: '78345678' },
-        { uuid: '789665-65432-38944', name: 'Second Office Account', mmaId: '78345677' },
-        { uuid: '789665-65432-18944', name: 'Third Office Account', mmaId: '78345676' },
-        { uuid: '789665-65432-98944', name: 'Fourth Office Account', mmaId: '78345675' },
-        { uuid: '789665-65432-48944', name: 'Fifth Office Account', mmaId: '78345674' }
+        { uuid: '789665-65432-78944', name: 'First Office Account', mmaId: '78345678', simsmeAccountRefCreation: { action: 'none' } },
+        { uuid: '789665-65432-38944', name: 'Second Office Account', mmaId: '78345677', simsmeAccountRefCreation: { action: 'none' } },
+        { uuid: '789665-65432-18944', name: 'Third Office Account', mmaId: '78345676', simsmeAccountRefCreation: { action: 'none' } },
+        { uuid: '789665-65432-98944', name: 'Fourth Office Account', mmaId: '78345675', simsmeAccountRefCreation: { action: 'none' } },
+        { uuid: '789665-65432-48944', name: 'Fifth Office Account', mmaId: '78345674', simsmeAccountRefCreation: { action: 'none' } }
     ];
 
     beforeEach(function(){
@@ -47,6 +47,7 @@ describe('resource: Account', function () {
         accountToUpdate.uuid = '56711234-897654-89';
         accountToUpdate.name = 'Account to update';
         accountToUpdate.mmaId = 123345666;
+        accountToUpdate.allowedOutChannels = [];
 
         $httpBackend.expect('PUT', '/accounts/uuid/' + accountToUpdate.uuid).respond(200);
         accountToUpdate.$update();
@@ -57,11 +58,13 @@ describe('resource: Account', function () {
         var accountToCreate = new Account();
         accountToCreate.name = 'Account to update';
         accountToCreate.mmaId = 123345666;
+        accountToCreate.allowedOutChannels = [];
 
         var createdAccount = new Account();
         createdAccount.uuid = '7864532-89765-98777-65';
         createdAccount.name = accountToCreate.name;
         createdAccount.mmaId = accountToCreate.mmaId;
+        createdAccount.allowedOutChannesl = accountToCreate.allowedOutChannels;
 
         $httpBackend.expect('POST', '/accounts/creations').respond(201, angular.toJson(createdAccount));
         accountToCreate.$save();
@@ -74,10 +77,36 @@ describe('resource: Account', function () {
         accountToReturn.uuid = accountUuid;
         accountToReturn.name = 'Account to return';
         accountToReturn.mmaId = 334456666;
+        accountToReturn.allowedOutChannels = [];
 
         $httpBackend.expect('GET', '/accounts/uuid/' + accountUuid).respond(200, angular.toJson(accountToReturn));
         var returnedAccount = Account.get({uuid: accountUuid});
         $httpBackend.flush();
+    });
+
+    it('should return from get() a properly transformed Account instance', function () {
+        var accountUuid = '563422-89-7777-675';
+        var accountToReturn = new Account();
+        accountToReturn.uuid = accountUuid;
+        accountToReturn.name = 'Properly transformed account';
+        accountToReturn.mmaId = 111111897645;
+        accountToReturn.allowedOutChannels = [];
+
+        $httpBackend.expect('GET', '/accounts/uuid/' + accountUuid).respond(200, angular.toJson(accountToReturn));
+        var returnedAccount = Account.get({uuid: accountUuid});
+        $httpBackend.flush();
+
+        expect(returnedAccount.requireSimsmeSubaccount).toBeDefined();
+        expect(returnedAccount.simsmeAccountRefCreation.action).toEqual('none');
+
+        returnedAccount.requireSimsmeSubaccount();
+        expect(returnedAccount.simsmeAccountRefCreation).toBeDefined();
+
+        returnedAccount.unrequireSimsmeSubaccount();
+        expect(returnedAccount.simsmeAccountRefCreation.action).toEqual('none');
+
+        returnedAccount.allowedOutChannels.push('SIMSme');
+        expect(returnedAccount.requiresSimsmeSubaccount()).toBeTruthy();
     });
 
 });

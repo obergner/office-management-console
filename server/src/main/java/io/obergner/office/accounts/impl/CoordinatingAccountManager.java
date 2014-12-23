@@ -11,6 +11,7 @@ import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -85,7 +86,7 @@ public class CoordinatingAccountManager implements AccountManager {
                 break;
             case createNew:
                 final CreateNewSimsmeAccountRefCreation createNewSimsmeAccountRefCreation = CreateNewSimsmeAccountRefCreation.class.cast(simsmeAccountRefCreation);
-                final String simsmeAccountName = createNewSimsmeAccountRefCreation.name != null ? createNewSimsmeAccountRefCreation.name : accountCreation.name;
+                final String simsmeAccountName = StringUtils.hasText(createNewSimsmeAccountRefCreation.name) ? createNewSimsmeAccountRefCreation.name : accountCreation.name;
                 simsmeAccountRef = this.simsmeAccountManager.createAccount(simsmeAccountName, createNewSimsmeAccountRefCreation.imageBase64Jpeg).guid;
                 break;
             default:

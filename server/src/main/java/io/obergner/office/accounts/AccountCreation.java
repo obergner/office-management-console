@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.obergner.office.accounts.subaccounts.simsme.CreateNewSimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.ExistingSimsmeAccountRefCreation;
+import io.obergner.office.accounts.subaccounts.simsme.NoneSimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -100,11 +101,11 @@ public final class AccountCreation implements Serializable {
         this.name = name;
         this.mmaId = mmaId;
         this.allowedOutChannels = allowedOutChannels;
-        this.simsmeAccountRefCreation = simsmeAccountRefCreation;
+        this.simsmeAccountRefCreation = (simsmeAccountRefCreation != null) ? simsmeAccountRefCreation : NoneSimsmeAccountRefCreation.instance();
     }
 
     public boolean createsSimsmeAccountRef() {
-        return this.simsmeAccountRefCreation != null;
+        return this.simsmeAccountRefCreation.action != SimsmeAccountRefCreation.Action.none;
     }
 
     @Override
@@ -114,18 +115,18 @@ public final class AccountCreation implements Serializable {
 
         final AccountCreation that = (AccountCreation) o;
 
-        return mmaId == that.mmaId
-                && Arrays.equals(allowedOutChannels, that.allowedOutChannels)
-                && name.equals(that.name)
-                && !(simsmeAccountRefCreation != null ? !simsmeAccountRefCreation.equals(that.simsmeAccountRefCreation) : that.simsmeAccountRefCreation != null);
+        return this.mmaId == that.mmaId
+                && Arrays.equals(this.allowedOutChannels, that.allowedOutChannels)
+                && this.name.equals(that.name)
+                && this.simsmeAccountRefCreation.equals(that.simsmeAccountRefCreation);
     }
 
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + (int) (mmaId ^ (mmaId >>> 32));
-        result = 31 * result + Arrays.hashCode(allowedOutChannels);
-        result = 31 * result + (simsmeAccountRefCreation != null ? simsmeAccountRefCreation.hashCode() : 0);
+        result = (31 * result) + (int) (mmaId ^ (mmaId >>> 32));
+        result = (31 * result) + Arrays.hashCode(allowedOutChannels);
+        result = (31 * result) + simsmeAccountRefCreation.hashCode();
         return result;
     }
 
