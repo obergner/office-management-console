@@ -3,13 +3,19 @@
     <form name="createAccountForm" class="form" novalidate>
         <fieldset>
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">&times;</button>
+                <button type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-hidden="true"
+                    ng-click="cancel()">&times;</button>
                 <h4 class="modal-title" id="account-new-modal-label">Create new account</h4>
             </div>
             <div class="modal-body">
                 <div>
-                    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="dismissAlert()">
-                        <strong>{{alert.status}}|{{alert.statusText}}</strong><br><br>
+                    <alert ng-repeat="alert in alerts"
+                    type="{{alert.type}}"
+                    close="dismissAlert()">
+                    <strong>{{alert.status}}|{{alert.statusText}}</strong><br><br>
                     <dl>
                         <dt>Code</dt>
                         <dd>{{alert.code}}</dd>
@@ -18,7 +24,9 @@
                         <dt>Message</dt>
                         <dd>{{alert.message}}</dd>
                     </dl>
-                    <ul class="list-group" ng-show="alert.fieldValidationErrors" ng-repeat="fieldValidationError in alert.fieldValidationErrors">
+                    <ul class="list-group"
+                        ng-show="alert.fieldValidationErrors"
+                        ng-repeat="fieldValidationError in alert.fieldValidationErrors">
                         <li class="list-group-item">
                         <h4 class="list-group-item-heading">Field</h4>
                         <p class="list-group-item-text">{{fieldValidationError.field}}</p>
@@ -37,44 +45,60 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-group"
-                                 ng-class="{ 'has-error': createAccountForm.name.$invalid && !createAccountForm.name.$pristine }">
+                                ng-class="{ 'has-error': createAccountForm.name.$invalid && !createAccountForm.name.$pristine }">
                                 <div class="input-group input-group-lg">
-                                    <span class="input-group-addon" popover-placement="left"
-                                          popover-title="Account name"
-                                          popover="Must be between 5 and 30 characters long.">Name</span>
-                                    <input type="text" name="name" class="form-control" placeholder="Name" required
-                                           ng-model="newAccount.name" ng-minlength="5" ng-maxlength="30">
+                                    <span class="input-group-addon"
+                                        popover-placement="left"
+                                        popover-title="Account name"
+                                        popover="Must be between 5 and 30 characters long.">Name</span>
+                                    <input type="text"
+                                    name="name"
+                                    class="form-control"
+                                    placeholder="Name"
+                                    required
+                                    ng-model="newAccount.name"
+                                    ng-minlength="5"
+                                    ng-maxlength="30">
                                 </div>
                                 <span ng-show="createAccountForm.name.$error.minlength" class="help-block">Name is too short.</span>
                                 <span ng-show="createAccountForm.name.$error.maxlength" class="help-block">Name is too long.</span>
                             </div>
                             <div class="form-group"
-                                 ng-class="{ 'has-error': createAccountForm.mma.$invalid && !createAccountForm.mma.$pristine }">
+                                ng-class="{ 'has-error': createAccountForm.mma.$invalid && !createAccountForm.mma.$pristine }">
                                 <div class="input-group input-group-lg">
-                                    <span class="input-group-addon" popover-placement="left"
-                                          popover-title="Mobile Messaging Account"
-                                          popover="Must be the ID of an existing MMA in CCC">MMA</span>
-                                    <input type="number" name="mma" class="form-control" placeholder="MMA" required
-                                           ng-model="newAccount.mmaId">
+                                    <span class="input-group-addon"
+                                        popover-placement="left"
+                                        popover-title="Mobile Messaging Account"
+                                        popover="Must be the ID of an existing MMA in CCC">MMA</span>
+                                    <input type="number"
+                                    name="mma"
+                                    class="form-control"
+                                    placeholder="MMA"
+                                    required
+                                    ng-model="newAccount.mmaId">
                                 </div>
                                 <span ng-show="createAccountForm.mma.$invalid && !createAccountForm.mma.$pristine"
-                                      class="help-block">MMA is required.</span>
+                                    class="help-block">MMA is required.</span>
                             </div>
                             <div class="form-group input-group input-group-lg">
-                                <span class="input-group-addon" popover-placement="left" popover-title="Out channels"
-                                      popover="Ordered list of out channels to try for this account">Allowed Out Channels</span>
-                                <ui-select multiple ng-model="newAccount.allowedOutChannels" theme="bootstrap"
-                                           close-on-select="false" on-select="onOutChannelSelected($item, $model)"
-                                           on-remove="onOutChannelDeselected($item, $model)">
-                                    <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
-                                    <ui-select-choices
-                                            repeat="outChannel in availableOutChannels | filter: $select.search">
-                                        <span ng-bind-html="outChannel | highlight: $select.search"></span>
-                                    </ui-select-choices>
+                                <span class="input-group-addon"
+                                    popover-placement="left"
+                                    popover-title="Out channels"
+                                    popover="Ordered list of out channels to try for this account">Allowed Out Channels</span>
+                                <ui-select multiple
+                                ng-model="newAccount.allowedOutChannels"
+                                theme="bootstrap"
+                                close-on-select="false"
+                                on-select="onOutChannelSelected($item, $model)"
+                                on-remove="onOutChannelDeselected($item, $model)">
+                                <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
+                                <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
+                                <span ng-bind-html="outChannel | highlight: $select.search"></span>
+                                </ui-select-choices>
                                 </ui-select>
                                 <span class="input-group-btn">
                                     <button ng-click="newAccount.allowedOutChannels = undefined"
-                                            class="btn btn-default">
+                                        class="btn btn-default">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </span>
@@ -83,31 +107,68 @@
                     </div>
                 </fieldset>
                 <fieldset id="create-account-form-simsme-account-fields"
-                          ng-disabled="!newAccount.requiresSimsmeSubaccount()">
+                    ng-disabled="!newAccount.requiresSimsmeSubaccount()">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">SIMSme account</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="form-group">
+                            <div class="form-group"
+                                ng-show="newAccount.simsmeAccountRefCreation === undefined || newAccount.simsmeAccountRefCreation.action === 'createNew'">
                                 <div class="input-group input-group-lg"
-                                     ng-dblclick="onSimsmeAccountNameInputDoubleClicked()">
-                                    <span class="input-group-addon">Name</span>
-                                    <input type="text" name="simsmeAccountName" class="form-control"
-                                           placeholder="{{newAccount.name}}"
-                                           ng-model="newAccount.simsmeAccountRefCreation.name"
-                                           ng-disabled="!usesCustomSimsmeAccountName">
+                                    ng-dblclick="newAccount.simsmeAccountRefCreation.useCustomName()">
+                                    <span class="input-group-addon"
+                                        popover-placement="left"
+                                        popover-title="SIMSme account name"
+                                        popover="Must be between 5 and 30 characters long.">Name</span>
+                                    <input type="text" 
+                                    name="simsmeAccountName"
+                                    class="form-control"
+                                    placeholder="{{newAccount.name}}"
+                                    ng-model="newAccount.simsmeAccountRefCreation.name"
+                                    ng-minlength="5"
+                                    ng-maxlength="30"
+                                    ng-disabled="newAccount.simsmeAccountRefCreation === undefined || !newAccount.simsmeAccountRefCreation.usesCustomName()">
+                                    <span class="input-group-btn">
+                                        <button ng-click="newAccount.simsmeAccountRefCreation.name = null"
+                                            class="btn btn-default">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </span>
                                 </div>
+                                <span ng-show="createAccountForm.simsmeAccountName.$error.minlength" class="help-block">Name is too short.</span>
+                                <span ng-show="createAccountForm.simsmeAccountName.$error.maxlength" class="help-block">Name is too long.</span>
+                            </div>
+                            <div class="form-group"
+                                ng-show="newAccount.simsmeAccountRefCreation !== undefined && newAccount.simsmeAccountRefCreation.action === 'referenceExisting'">
+                                <div class="input-group input-group-lg"
+                                    ng-dblclick="newAccount.simsmeAccountRefCreation.useCustomName()">
+                                    <span class="input-group-addon"
+                                        popover-placement="left"
+                                        popover-title="SIMSme account GUID"
+                                        popover="Example: '0:{A45F3D1F-4444-78F3-A45F-FF10FF10FF10}'.">GUID</span>
+                                    <input type="text" 
+                                    name="simsmeAccountGuid"
+                                    class="form-control"
+                                    placeholder="Referenced SIMSme account GUID"
+                                    ng-required="newAccount.simsmeAccountRefCreation !== undefined && newAccount.simsmeAccountRefCreation.action === 'referenceExisting'"
+                                    ng-model="newAccount.simsmeAccountRefCreation.existingSimsmeGuid"
+                                    ng-pattern="newAccount.existingSimsmeGuidPattern()">
+                                </div>
+                                <span ng-show="createAccountForm.simsmeAccountGuid.$error.pattern" class="help-block">GUID is not a valid SIMSme GUID.</span>
+                                <span ng-show="createAccountForm.simsmeAccountGuid.$error.required" class="help-block">GUID is required.</span>
                             </div>
                         </div>
                         <div class="panel-footer">
                             <div class="btn-group">
                                 <label class="btn btn-primary btn-xs"
-                                       ng-model="newAccount.simsmeAccountRefCreation.action" btn-radio="'createNew'">Create
-                                    new</label>
+                                    ng-model="newAccount.simsmeAccountRefCreation.action" 
+                                    ng-click="newAccount.requireSimsmeAccountRefCreation('createNew')"
+                                    btn-radio="'createNew'">Create new</label>
                                 <label class="btn btn-primary btn-xs"
-                                       ng-model="newAccount.simsmeAccountRefCreation.action"
-                                       btn-radio="'referenceExisting'">Use existing</label>
+                                    ng-model="newAccount.simsmeAccountRefCreation.action"
+                                    ng-click="newAccount.requireSimsmeAccountRefCreation('referenceExisting')"
+                                    btn-radio="'referenceExisting'">Use existing</label>
                             </div>
                         </div>
                     </div>
