@@ -2,6 +2,7 @@ angular.module('accounts', [
     'services.localizedMessages',
     'services.apiErrorHandler',
     'resources.account',
+    'resources.accountCreation',
     'ui.router'
 ])
 
@@ -37,8 +38,8 @@ angular.module('accounts', [
                 size: 'lg',
                 backdrop: false,
                 resolve: {
-                    newAccount: ['Account', function (Account) {
-                        return new Account();
+                    newAccount: ['AccountCreation', function (AccountCreation) {
+                        return new AccountCreation();
                     }]
                 },
                 controller: 'CreateAccountCtrl'
