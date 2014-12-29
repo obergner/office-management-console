@@ -114,7 +114,8 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-group"
-                                ng-show="newAccount.simsmeAccountRefCreation === undefined || newAccount.simsmeAccountRefCreation.action === 'createNew'">
+                                ng-form="createNewSimsmeSubaccountForm"
+                                ng-show="newAccount.createsNewSimsmeSubaccount()">
                                 <div class="input-group input-group-lg"
                                     ng-dblclick="newAccount.simsmeAccountRefCreation.useCustomName()">
                                     <span class="input-group-addon"
@@ -126,9 +127,8 @@
                                     class="form-control"
                                     placeholder="{{newAccount.name}}"
                                     ng-model="newAccount.simsmeAccountRefCreation.name"
-                                    ng-minlength="5"
-                                    ng-maxlength="30"
-                                    ng-disabled="newAccount.simsmeAccountRefCreation === undefined || !newAccount.simsmeAccountRefCreation.usesCustomName()">
+                                    ng-pattern="/^.{5,30}$/"
+                                    ng-disabled="!newAccount.createsNewSimsmeSubaccountWithCustomName()">
                                     <span class="input-group-btn">
                                         <button ng-click="newAccount.simsmeAccountRefCreation.name = null"
                                             class="btn btn-default">
@@ -136,11 +136,11 @@
                                         </button>
                                     </span>
                                 </div>
-                                <span ng-show="createAccountForm.simsmeAccountName.$error.minlength" class="help-block">Name is too short.</span>
-                                <span ng-show="createAccountForm.simsmeAccountName.$error.maxlength" class="help-block">Name is too long.</span>
+                                <span ng-show="createNewSimsmeSubaccountForm.simsmeAccountName.$error.pattern" class="help-block">Name must be between 5 and 30 characters long.</span>
                             </div>
                             <div class="form-group"
-                                ng-show="newAccount.simsmeAccountRefCreation !== undefined && newAccount.simsmeAccountRefCreation.action === 'referenceExisting'">
+                                ng-form="referenceExistingSimsmeSubaccountForm"
+                                ng-show="newAccount.referencesExistingSimsmeSubaccount()">
                                 <div class="input-group input-group-lg"
                                     ng-dblclick="newAccount.simsmeAccountRefCreation.useCustomName()">
                                     <span class="input-group-addon"
@@ -151,23 +151,23 @@
                                     name="simsmeAccountGuid"
                                     class="form-control"
                                     placeholder="Referenced SIMSme account GUID"
-                                    ng-required="newAccount.simsmeAccountRefCreation !== undefined && newAccount.simsmeAccountRefCreation.action === 'referenceExisting'"
+                                    ng-required="newAccount.referencesExistingSimsmeSubaccount()"
                                     ng-model="newAccount.simsmeAccountRefCreation.existingSimsmeGuid"
-                                    ng-pattern="newAccount.existingSimsmeGuidPattern()">
+                                    ng-pattern="/^\d{1,3}:\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$/">
                                 </div>
-                                <span ng-show="createAccountForm.simsmeAccountGuid.$error.pattern" class="help-block">GUID is not a valid SIMSme GUID.</span>
-                                <span ng-show="createAccountForm.simsmeAccountGuid.$error.required" class="help-block">GUID is required.</span>
+                                <span ng-show="referenceExistingSimsmeSubaccountForm.simsmeAccountGuid.$error.pattern" class="help-block">GUID is not a valid SIMSme GUID.</span>
+                                <span ng-show="referenceExistingSimsmeSubaccountForm.simsmeAccountGuid.$error.required" class="help-block">GUID is required.</span>
                             </div>
                         </div>
                         <div class="panel-footer">
                             <div class="btn-group">
                                 <label class="btn btn-primary btn-xs"
                                     ng-model="newAccount.simsmeAccountRefCreation.action" 
-                                    ng-click="newAccount.requireSimsmeAccountRefCreation('createNew')"
+                                    ng-click="onSimsmeAccountRefCreationActionChanged('createNew')"
                                     btn-radio="'createNew'">Create new</label>
                                 <label class="btn btn-primary btn-xs"
                                     ng-model="newAccount.simsmeAccountRefCreation.action"
-                                    ng-click="newAccount.requireSimsmeAccountRefCreation('referenceExisting')"
+                                    ng-click="onSimsmeAccountRefCreationActionChanged('referenceExisting')"
                                     btn-radio="'referenceExisting'">Use existing</label>
                             </div>
                         </div>
@@ -176,7 +176,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
-                <button type="button" class="btn btn-success" ng-click="ok()" ng-disabled="createAccountForm.$invalid">Save changes</button>
+                <button type="button" class="btn btn-success" ng-click="ok()" ng-disabled="!isValidInput()">Save changes</button>
             </div>
         </fieldset>
     </form>

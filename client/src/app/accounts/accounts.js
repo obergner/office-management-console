@@ -112,13 +112,38 @@ angular.module('accounts', [
 
         $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.newAccount.requireSimsmeSubaccount();
+                $scope.newAccount.requireSimsmeSubaccount('createNew');
             }
         };
 
         $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
                 $scope.newAccount.unrequireSimsmeSubaccount();
+            }
+        };
+
+        $scope.isValidInput = function() {
+            return ($scope.createAccountForm.$valid && (!$scope.newAccount.requiresSimsmeSubaccount() ? true : ($scope.newAccount.createsNewSimsmeSubaccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
+        };
+
+        $scope.onSimsmeAccountRefCreationActionChanged = function(action) {
+            switch(action) {
+                case 'createNew':
+                    $scope.createAccountForm.$removeControl($scope.referenceExistingSimsmeSubaccountForm);
+                    if (!($scope.createNewSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
+                        $scope.createAccountForm.$addControl($scope.createNewSimsmeSubaccountForm);
+                    }
+                    $scope.newAccount.requireSimsmeSubaccount('createNew');
+                    break;
+                case 'referenceExisting':
+                    $scope.createAccountForm.$removeControl($scope.createNewSimsmeSubaccountForm);
+                    if (!($scope.referenceExistingSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
+                        $scope.createAccountForm.$addControl($scope.referenceExistingSimsmeSubaccountForm);
+                    }
+                    $scope.newAccount.requireSimsmeSubaccount('referenceExisting');
+                    break;
+                default:
+                    throw new Error('Unknown action: ' + action);
             }
         };
 
