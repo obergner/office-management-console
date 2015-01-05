@@ -19,7 +19,6 @@ module.exports = function(config) {
             'vendor/jquery/jquery.js',
             'vendor/angular/angular.js',
             'vendor/angular/angular-sanitize.js',
-            'vendor/angular/angular-route.js',
             'vendor/angular/angular-resource.js',
             'vendor/angular/angular-animate.js',
             'vendor/angular-growl-2/angular-growl.js',

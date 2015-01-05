@@ -96,7 +96,7 @@ module.exports = function (grunt) {
                 }
             },
             angular: {
-                src:['vendor/angular/angular.js', 'vendor/angular/angular-sanitize.js', 'vendor/angular/angular-route.js', 'vendor/angular/angular-resource.js', 'vendor/angular/angular-animate.js'],
+                src:['vendor/angular/angular.js', 'vendor/angular/angular-sanitize.js', 'vendor/angular/angular-resource.js', 'vendor/angular/angular-animate.js'],
                 dest: '<%= distdir %>/js/angular.js'
             },
             angularUi: {
