@@ -3,6 +3,8 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
 .factory('AccountCreationViewModel', ['AccountCreation', function(AccountCreation){
 
     var AccountCreationViewModel = function() {
+        this.AvailableOutChannels = ['FlashSMS', 'USSD', 'SIMSme'];
+
         this.name = '';
         this.mmaId = null;
         this.allowedOutChannels = [];
@@ -10,7 +12,7 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
         this.subaccounts = new AccountCreationViewModel.Subaccounts(this);
     };
 
-    AccountCreationViewModel.prototype.save = function() {
+    AccountCreationViewModel.prototype.save = function(onSuccess, onError) {
         var accountCreationResource = new AccountCreation();
         accountCreationResource.name = this.name;
         accountCreationResource.mmaId = this.mmaId;
@@ -19,7 +21,7 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
             accountCreationResource.simsmeAccountRefCreation = this.subaccounts.simsme;
         }
 
-        accountCreationResource.$save();
+        accountCreationResource.$save(onSuccess, onError);
     };
 
     AccountCreationViewModel.Subaccounts = function(parent) {

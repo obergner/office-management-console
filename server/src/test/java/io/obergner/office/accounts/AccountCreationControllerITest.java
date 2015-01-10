@@ -96,7 +96,7 @@ public class AccountCreationControllerITest {
                 .withReferenceToExistingSimsmeAccount(refToExistingSimsmeAccount)
                 .build();
 
-        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accountcreations",
                 request,
                 String.class);
 
@@ -123,7 +123,7 @@ public class AccountCreationControllerITest {
                 .withReferenceToNewSimsmeAccount("New SIMSme account", "78ehhggdd")
                 .build();
 
-        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accounts/creations",
+        final ResponseEntity<String> entity = this.restClient.postForEntity("http://localhost:" + this.port + "/accountcreations",
                 request,
                 String.class);
 

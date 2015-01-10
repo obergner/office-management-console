@@ -92,12 +92,12 @@
                                 on-select="onOutChannelSelected($item, $model)"
                                 on-remove="onOutChannelDeselected($item, $model)">
                                 <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
-                                <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
+                                <ui-select-choices repeat="outChannel in newAccount.AvailableOutChannels | filter: $select.search">
                                 <span ng-bind-html="outChannel | highlight: $select.search"></span>
                                 </ui-select-choices>
                                 </ui-select>
                                 <span class="input-group-btn">
-                                    <button ng-click="newAccount.allowedOutChannels = undefined"
+                                    <button ng-click="newAccount.allowedOutChannels = []"
                                         class="btn btn-default">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
@@ -107,7 +107,7 @@
                     </div>
                 </fieldset>
                 <fieldset id="create-account-form-simsme-account-fields"
-                    ng-disabled="!newAccount.requiresSimsmeSubaccount()">
+                    ng-disabled="!newAccount.subaccounts.requiresSimsmeSubaccount()">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">SIMSme account</h3>
@@ -115,9 +115,9 @@
                         <div class="panel-body">
                             <div class="form-group"
                                 ng-form="createNewSimsmeSubaccountForm"
-                                ng-show="newAccount.createsNewSimsmeSubaccount()">
+                                ng-show="newAccount.subaccounts.createsNewSimsmeAccount()">
                                 <div class="input-group input-group-lg"
-                                    ng-dblclick="newAccount.simsmeAccountRefCreation.useCustomName()">
+                                    ng-dblclick="newAccount.subaccounts.simsme.useCustomName()">
                                     <span class="input-group-addon"
                                         popover-placement="left"
                                         popover-title="SIMSme account name"
@@ -126,11 +126,11 @@
                                     name="simsmeAccountName"
                                     class="form-control"
                                     placeholder="{{newAccount.name}}"
-                                    ng-model="newAccount.simsmeAccountRefCreation.name"
+                                    ng-model="newAccount.subaccounts.simsme.name"
                                     ng-pattern="/^.{5,30}$/"
-                                    ng-disabled="!newAccount.createsNewSimsmeSubaccountWithCustomName()">
+                                    ng-disabled="!newAccount.subaccounts.simsme.usesCustomName()">
                                     <span class="input-group-btn">
-                                        <button ng-click="newAccount.simsmeAccountRefCreation.name = null"
+                                        <button ng-click="newAccount.subaccounts.simsme.name = null"
                                             class="btn btn-default">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </button>
@@ -140,9 +140,9 @@
                             </div>
                             <div class="form-group"
                                 ng-form="referenceExistingSimsmeSubaccountForm"
-                                ng-show="newAccount.referencesExistingSimsmeSubaccount()">
+                                ng-show="newAccount.subaccounts.referencesExistingSimsmeAccount()">
                                 <div class="input-group input-group-lg"
-                                    ng-dblclick="newAccount.simsmeAccountRefCreation.useCustomName()">
+                                    ng-dblclick="newAccount.subaccounts.simsme.useCustomName()">
                                     <span class="input-group-addon"
                                         popover-placement="left"
                                         popover-title="SIMSme account GUID"
@@ -151,8 +151,8 @@
                                     name="simsmeAccountGuid"
                                     class="form-control"
                                     placeholder="Referenced SIMSme account GUID"
-                                    ng-required="newAccount.referencesExistingSimsmeSubaccount()"
-                                    ng-model="newAccount.simsmeAccountRefCreation.existingSimsmeGuid"
+                                    ng-required="newAccount.subaccounts.referencesExistingSimsmeAccount()"
+                                    ng-model="newAccount.subaccounts.simsme.existingSimsmeGuid"
                                     ng-pattern="/^\d{1,3}:\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$/">
                                 </div>
                                 <span ng-show="referenceExistingSimsmeSubaccountForm.simsmeAccountGuid.$error.pattern" class="help-block">GUID is not a valid SIMSme GUID.</span>
@@ -162,11 +162,11 @@
                         <div class="panel-footer">
                             <div class="btn-group">
                                 <label class="btn btn-primary btn-xs"
-                                    ng-model="newAccount.simsmeAccountRefCreation.action" 
+                                    ng-model="newAccount.subaccounts.simsme.action" 
                                     ng-click="onSimsmeAccountRefCreationActionChanged('createNew')"
                                     btn-radio="'createNew'">Create new</label>
                                 <label class="btn btn-primary btn-xs"
-                                    ng-model="newAccount.simsmeAccountRefCreation.action"
+                                    ng-model="newAccount.subaccounts.simsme.action"
                                     ng-click="onSimsmeAccountRefCreationActionChanged('referenceExisting')"
                                     btn-radio="'referenceExisting'">Use existing</label>
                             </div>

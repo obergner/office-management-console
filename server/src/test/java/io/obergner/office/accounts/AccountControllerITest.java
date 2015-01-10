@@ -101,7 +101,7 @@ public class AccountControllerITest {
 
         assertEquals(RedisTestAccounts.ALL_ACCOUNTS.size(), entity.getBody().size());
     }
-    
+
     @Test
     public void create_account_should_return_created_account_and_store_it_in_redis() throws Exception {
         final String newAccountName = this.testName.getMethodName();

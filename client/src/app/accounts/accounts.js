@@ -2,7 +2,7 @@ angular.module('accounts', [
     'services.localizedMessages',
     'services.apiErrorHandler',
     'resources.account',
-    'resources.accountCreation',
+    'viewmodels.accountCreation',
     'ui.router'
 ])
 
@@ -38,8 +38,8 @@ angular.module('accounts', [
                 size: 'lg',
                 backdrop: false,
                 resolve: {
-                    newAccount: ['AccountCreation', function (AccountCreation) {
-                        return new AccountCreation();
+                    newAccount: ['AccountCreationViewModel', function (AccountCreationViewModel) {
+                        return new AccountCreationViewModel();
                     }]
                 },
                 controller: 'CreateAccountCtrl'
@@ -99,12 +99,11 @@ angular.module('accounts', [
     });
 }])
 
-.controller('CreateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'newAccount', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, newAccount) {
+.controller('CreateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'newAccount', 
+    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, newAccount) {
 
         $scope.newAccount = newAccount;
         $scope.alerts = [];
-        $scope.availableOutChannels = AccountSettings.outChannels;
 
         $scope.dismissAlert = function() {
             $scope.alerts.length = 0;
@@ -112,18 +111,18 @@ angular.module('accounts', [
 
         $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.newAccount.requireSimsmeSubaccount('createNew');
+                $scope.newAccount.subaccounts.simsmeSwitchTo('createNew');
             }
         };
 
         $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.newAccount.unrequireSimsmeSubaccount();
+                $scope.newAccount.subaccounts.simsmeSwitchTo();
             }
         };
 
         $scope.isValidInput = function() {
-            return ($scope.createAccountForm.$valid && (!$scope.newAccount.requiresSimsmeSubaccount() ? true : ($scope.newAccount.createsNewSimsmeSubaccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
+            return ($scope.createAccountForm.$valid && (!$scope.newAccount.subaccounts.requiresSimsmeSubaccount() ? true : ($scope.newAccount.subaccounts.createsNewSimsmeAccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
         };
 
         $scope.onSimsmeAccountRefCreationActionChanged = function(action) {
@@ -133,14 +132,14 @@ angular.module('accounts', [
                     if (!($scope.createNewSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
                         $scope.createAccountForm.$addControl($scope.createNewSimsmeSubaccountForm);
                     }
-                    $scope.newAccount.requireSimsmeSubaccount('createNew');
+                    $scope.newAccount.subaccounts.simsmeSwitchTo('createNew');
                     break;
                 case 'referenceExisting':
                     $scope.createAccountForm.$removeControl($scope.createNewSimsmeSubaccountForm);
                     if (!($scope.referenceExistingSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
                         $scope.createAccountForm.$addControl($scope.referenceExistingSimsmeSubaccountForm);
                     }
-                    $scope.newAccount.requireSimsmeSubaccount('referenceExisting');
+                    $scope.newAccount.subaccounts.simsmeSwitchTo('referenceExisting');
                     break;
                 default:
                     throw new Error('Unknown action: ' + action);
@@ -149,7 +148,7 @@ angular.module('accounts', [
 
         $scope.ok = function () {
             $scope.dismissAlert();
-            $scope.newAccount.$save(
+            $scope.newAccount.save(
                 function(createdAccount) {
                     $modalInstance.close(createdAccount);
                     $state.go('accounts', {}, { reload: true }).then(function() {
