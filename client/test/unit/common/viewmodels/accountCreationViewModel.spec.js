@@ -110,7 +110,7 @@ describe('viewmodel: AccountCreationViewModel', function () {
             createdAccount.name = accountToCreate.name;
             createdAccount.mmaId = accountToCreate.mmaId;
             createdAccount.allowedOutChannesl = accountToCreate.allowedOutChannels;
-            $httpBackend.expect('POST', '/accounts/creations').respond(201, angular.toJson(createdAccount));
+            $httpBackend.expect('POST', '/accountcreations').respond(201, angular.toJson(createdAccount));
 
             accountToCreate.save();
             $httpBackend.flush();

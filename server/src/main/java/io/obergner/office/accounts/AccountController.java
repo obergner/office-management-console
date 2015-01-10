@@ -1,9 +1,7 @@
 package io.obergner.office.accounts;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,14 +36,6 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     public Account createAccount(@RequestBody @Valid final CreateAccount newAccount) {
         return this.accountManager.createAccount(newAccount.name, newAccount.mmaId, newAccount.allowedOutChannels);
-    }
-
-    @RequestMapping(value = "/creations", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> postAccountCreation(@RequestBody @Valid final AccountCreation accountCreation) {
-        final Account createdAccount = this.accountManager.createAccount(accountCreation);
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(URI.create("/accounts/uuid/" + createdAccount.uuid.toString()));
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/uuid/{uuid}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

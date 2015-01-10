@@ -25,6 +25,11 @@ public class AccountManagementConfiguration {
     }
 
     @Bean
+    public AccountCreationController accountCreationController(final AccountManager accountManager) {
+        return new AccountCreationController(accountManager);
+    }
+
+    @Bean
     public AccountController accountController(final AccountManager accountManager) {
         return new AccountController(accountManager);
     }
