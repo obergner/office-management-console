@@ -6,7 +6,7 @@ angular.module('accounts.edit', [
 .controller('EditAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToUpdate', 
     function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
 
-        $scope.accountToUpdate = accountToUpdate;
+        $scope.account = accountToUpdate;
         $scope.alerts = [];
         $scope.availableOutChannels = AccountSettings.outChannels;
 
@@ -16,7 +16,7 @@ angular.module('accounts.edit', [
 
         $scope.ok = function () {
             $scope.dismissAlert();
-            $scope.accountToUpdate.$update(
+            $scope.account.$update(
                 function(updatedAccount) {
                     $modalInstance.close(updatedAccount);
                     $state.go('accounts', {}, { reload: true }).then(function() {

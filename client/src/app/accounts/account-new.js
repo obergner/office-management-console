@@ -6,7 +6,7 @@ angular.module('accounts.new', [
 .controller('NewAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'newAccount', 
     function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, newAccount) {
 
-        $scope.newAccount = newAccount;
+        $scope.account = newAccount;
         $scope.alerts = [];
 
         $scope.dismissAlert = function() {
@@ -15,18 +15,18 @@ angular.module('accounts.new', [
 
         $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.newAccount.subaccounts.simsmeSwitchTo('createNew');
+                $scope.account.subaccounts.simsmeSwitchTo('createNew');
             }
         };
 
         $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.newAccount.subaccounts.simsmeSwitchTo();
+                $scope.account.subaccounts.simsmeSwitchTo();
             }
         };
 
         $scope.isValidInput = function() {
-            return ($scope.createAccountForm.$valid && (!$scope.newAccount.subaccounts.requiresSimsmeSubaccount() ? true : ($scope.newAccount.subaccounts.createsNewSimsmeAccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
+            return ($scope.createAccountForm.$valid && (!$scope.account.subaccounts.requiresSimsmeSubaccount() ? true : ($scope.account.subaccounts.createsNewSimsmeAccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
         };
 
         $scope.onSimsmeAccountRefCreationActionChanged = function(action) {
@@ -36,14 +36,14 @@ angular.module('accounts.new', [
                     if (!($scope.createNewSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
                         $scope.createAccountForm.$addControl($scope.createNewSimsmeSubaccountForm);
                     }
-                    $scope.newAccount.subaccounts.simsmeSwitchTo('createNew');
+                    $scope.account.subaccounts.simsmeSwitchTo('createNew');
                     break;
                 case 'referenceExisting':
                     $scope.createAccountForm.$removeControl($scope.createNewSimsmeSubaccountForm);
                     if (!($scope.referenceExistingSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
                         $scope.createAccountForm.$addControl($scope.referenceExistingSimsmeSubaccountForm);
                     }
-                    $scope.newAccount.subaccounts.simsmeSwitchTo('referenceExisting');
+                    $scope.account.subaccounts.simsmeSwitchTo('referenceExisting');
                     break;
                 default:
                     throw new Error('Unknown action: ' + action);
@@ -52,7 +52,7 @@ angular.module('accounts.new', [
 
         $scope.ok = function () {
             $scope.dismissAlert();
-            $scope.newAccount.save(
+            $scope.account.save(
                 function(createdAccount) {
                     $modalInstance.close(createdAccount);
                     $state.go('accounts', {}, { reload: true }).then(function() {

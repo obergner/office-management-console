@@ -1,56 +1,57 @@
-<div>
-    <!-- Modal -->
+<!-- Modal -->
+<form name="deleteAccountForm" class="form-horizontal" novalidate>
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="account-delete-modal-label">Delete account "{{accountToDelete.uuid}} | {{accountToDelete.name}}"?</h4>
+        <button type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+            ng-click="cancel()">&times;</button>
+        <h4 class="modal-title" id="account-delete-modal-label">Delete account {{account.uuid}} | {{account.name}}?</h4>
     </div>
     <div class="modal-body">
-        <form class="form">
-            <fieldset>
-                <div>
-                    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="dismissAlert()">
-                    <strong>{{alert.status}}|{{alert.statusText}}</strong><br></br>
-                    <dl>
-                        <dt>Code</dt>
-                        <dd>{{alert.code}}</dd>
-                    </dl>
-                    <dl>
-                        <dt>Message</dt>
-                        <dd>{{alert.message}}</dd>
-                    </dl>
-                    </alert>
+        <fieldset id="delete-account-form-mandatory-fields" disabled>
+            <legend>Office account</legend>
+            <div class="row-fluid">
+                <div class="form-group">
+                    <label for="name"
+                        class="col-md-2 control-label">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                        name="name"
+                        class="form-control"
+                        ng-model="account.name">
+                    </div>
                 </div>
-                <div class="form-group input-group input-group-lg">
-                    <span class="input-group-addon">UUID</span>
-                    <input type="text" class="form-control" disabled ng-model="accountToDelete.uuid">
+                <div class="form-group">
+                    <label for="mma"
+                        class="col-md-2 control-label">MMA</label>
+                    <div class="col-md-8">
+                        <input type="number"
+                        name="mma"
+                        class="form-control"
+                        ng-model="account.mmaId">
+                    </div>
                 </div>
-                <div class="form-group input-group input-group-lg">
-                    <span class="input-group-addon">Name</span>
-                    <input type="text" class="form-control" disabled ng-model="accountToDelete.name">
+                <div class="form-group">
+                    <label for="inputAllowedOutChannels"
+                        class="col-md-2 control-label">Out channels</label>
+                    <div id="inputAllowedOutChannels" class="col-md-8">
+                        <ui-select multiple
+                        ng-model="account.allowedOutChannels"
+                        theme="bootstrap"
+                        close-on-select="false">
+                        <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
+                        <span ng-bind-html="outChannel | highlight: $select.search"></span>
+                        </ui-select-choices>
+                        </ui-select>
+                    </div>
                 </div>
-                <div class="form-group input-group input-group-lg">
-                    <span class="input-group-addon">MMA</span>
-                    <input type="number" class="form-control" disabled ng-model="accountToDelete.mmaId">
-                </div>
-                <div class="form-group input-group input-group-lg">
-                    <span class="input-group-addon">Allowed Out Channels</span>
-                    <ui-select multiple ng-model="accountToDelete.allowedOutChannels" theme="bootstrap" ng-disabled="true">
-                    <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
-                    <span ng-bind-html="outChannel | highlight: $select.search"></span>
-                    </ui-select-choices>
-                    </ui-select>
-                    <span class="input-group-btn">
-                        <button ng-click="accountToDelete.allowedOutChannels = undefined" class="btn btn-default">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                    </span> 
-                </div>
-            </fieldset>
-        </form>
+            </div>
+        </fieldset>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
         <button type="button" class="btn btn-success" ng-click="ok()">Delete account</button>
     </div>
-</div>
+</form>

@@ -6,7 +6,7 @@ angular.module('accounts.delete', [
 .controller('DeleteAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToDelete', 
     function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToDelete) {
 
-        $scope.accountToDelete = accountToDelete;
+        $scope.account = accountToDelete;
         $scope.alerts = [];
         $scope.availableOutChannels = AccountSettings.outChannels;
 
@@ -16,11 +16,11 @@ angular.module('accounts.delete', [
 
         $scope.ok = function () {
             $scope.dismissAlert();
-            $scope.accountToDelete.$delete(
+            $scope.account.$delete(
                 function() {
-                    $modalInstance.close($scope.accountToDelete);
+                    $modalInstance.close($scope.account);
                     $state.go('accounts', {}, { reload: true }).then(function() {
-                        growl.success(localizedMessages.get('crud.account.delete.success', {account: $scope.accountToDelete}), {title: 'Account deleted'});
+                        growl.success(localizedMessages.get('crud.account.delete.success', {account: $scope.account}), {title: 'Account deleted'});
                     });
                 },
                 function(httpResponse) {

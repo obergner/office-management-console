@@ -1,73 +1,111 @@
-<div>
-    <!-- Modal -->
-    <form name="editAccountForm" class="form" novalidate>
-        <fieldset>
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">&times;</button>
-                <h4 class="modal-title" id="account-edit-modal-label">Edit account</h4>
-            </div>
-            <div class="modal-body">
-                <div>
-                    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="dismissAlert()">
-                    <strong>{{alert.status}}|{{alert.statusText}}</strong><br></br>
-                    <dl>
-                        <dt>Code</dt>
-                        <dd>{{alert.code}}</dd>
-                    </dl>
-                    <dl>
-                        <dt>Message</dt>
-                        <dd>{{alert.message}}</dd>
-                    </dl>
-                    <ul class="list-group" ng-show="alert.fieldValidationErrors" ng-repeat="fieldValidationError in alert.fieldValidationErrors">
-                        <li class="list-group-item">
-                        <h4 class="list-group-item-heading">Field</h4>
-                        <p class="list-group-item-text">{{fieldValidationError.field}}</p>
-                        </li>
-                        <li class="list-group-item">
-                        <h4 class="list-group-item-heading">Message</h4>
-                        <p class="list-group-item-text">{{fieldValidationError.message}}</p>
-                        </li>
-                    </ul>
-                    </alert>
-                </div>
-                <div class="form-group input-group input-group-lg">
-                    <span class="input-group-addon">UUID</span>
-                    <input type="text" name="uuid" class="form-control" disabled ng-model="accountToUpdate.uuid">
-                </div>
-                <div class="form-group" ng-class="{ 'has-error': editAccountForm.name.$invalid && !editAccountForm.name.$pristine }">
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-addon" popover-placement="left" popover-title="Account name" popover="Must be between 5 and 30 characters long.">Name</span>
-                        <input type="text" name="name" class="form-control" placeholder="Name" required ng-model="accountToUpdate.name" ng-minlength="5" ng-maxlength="30">
+<!-- Modal -->
+<form name="editAccountForm" class="form-horizontal" novalidate>
+    <div class="modal-header">
+        <button type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+            ng-click="cancel()">&times;</button>
+        <h4 class="modal-title" id="account-edit-modal-label">Edit account {{account.uuid}}</h4>
+    </div>
+    <div class="modal-body">
+        <div>
+            <alert ng-repeat="alert in alerts"
+            type="{{alert.type}}"
+            close="dismissAlert()">
+            <strong>{{alert.status}}|{{alert.statusText}}</strong><br><br>
+            <dl>
+                <dt>Code</dt>
+                <dd>{{alert.code}}</dd>
+            </dl>
+            <dl>
+                <dt>Message</dt>
+                <dd>{{alert.message}}</dd>
+            </dl>
+            <ul class="list-group"
+                ng-show="alert.fieldValidationErrors"
+                ng-repeat="fieldValidationError in alert.fieldValidationErrors">
+                <li class="list-group-item">
+                <h4 class="list-group-item-heading">Field</h4>
+                <p class="list-group-item-text">{{fieldValidationError.field}}</p>
+                </li>
+                <li class="list-group-item">
+                <h4 class="list-group-item-heading">Message</h4>
+                <p class="list-group-item-text">{{fieldValidationError.message}}</p>
+                </li>
+            </ul>
+            </alert>
+        </div>
+        <fieldset id="edit-account-form-mandatory-fields">
+            <legend>Office account</legend>
+            <div class="row-fluid">
+                <div class="form-group">
+                    <label for="name"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="Account name"
+                        popover="Must be between 5 and 30 characters long.">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                        name="name"
+                        class="form-control"
+                        ng-class="{ 'has-error': editAccountForm.name.$invalid && !editAccountForm.name.$pristine }"
+                        placeholder="Name"
+                        required
+                        ng-model="account.name"
+                        ng-minlength="5"
+                        ng-maxlength="30">
+                        <span ng-show="editAccountForm.name.$error.minlength" class="help-block">Name is too short.</span>
+                        <span ng-show="editAccountForm.name.$error.maxlength" class="help-block">Name is too long.</span>
                     </div>
-                    <span ng-show="editAccountForm.name.$error.minlength" class="help-block">Name is too short.</span>
-                    <span ng-show="editAccountForm.name.$error.maxlength" class="help-block">Name is too long.</span>
                 </div>
-                <div class="form-group" ng-class="{ 'has-error': editAccountForm.mma.$invalid && !editAccountForm.mma.$pristine }">
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-addon" popover-placement="left" popover-title="Mobile Messaging Account" popover="Must be the ID of an existing MMA in CCC">MMA</span>
-                        <input type="number" name="mma" class="form-control" placeholder="MMA" required ng-model="accountToUpdate.mmaId">
+                <div class="form-group">
+                    <label for="mma"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="Mobile Messaging Account"
+                        popover="Must be the ID of an existing MMA in CCC">MMA</label>
+                    <div class="col-md-8">
+                        <input type="number"
+                        name="mma"
+                        class="form-control"
+                        ng-class="{ 'has-error': editAccountForm.mma.$invalid && !editAccountForm.mma.$pristine }"
+                        placeholder="MMA"
+                        required
+                        ng-model="account.mmaId">
+                        <span ng-show="editAccountForm.mma.$invalid && !editAccountForm.mma.$pristine"
+                            class="help-block">MMA is required.</span>
                     </div>
-                    <span ng-show="editAccountForm.mma.$invalid && !editAccountForm.mma.$pristine" class="help-block">MMA is required.</span>
                 </div>
-                <div class="form-group input-group input-group-lg">
-                    <span class="input-group-addon" popover-placement="left" popover-title="Out channels" popover="Ordered list of out channels to try for this account">Allowed Out Channels</span>
-                    <ui-select multiple ng-model="accountToUpdate.allowedOutChannels" theme="bootstrap" close-on-select="false">
-                    <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
-                    <span ng-bind-html="outChannel | highlight: $select.search"></span>
-                    </ui-select-choices>
-                    </ui-select>
-                    <span class="input-group-btn">
-                        <button ng-click="accountToUpdate.allowedOutChannels = undefined" class="btn btn-default">
+                <div class="form-group">
+                    <label for="inputAllowedOutChannels"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="Out channels"
+                        popover="Ordered list of out channels to try for this account">Out channels</label>
+                    <div id="inputAllowedOutChannels" class="col-md-7">
+                        <ui-select multiple
+                        ng-model="account.allowedOutChannels"
+                        theme="bootstrap"
+                        close-on-select="false">
+                        <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
+                        <span ng-bind-html="outChannel | highlight: $select.search"></span>
+                        </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <span class="col-md-1">
+                        <button ng-click="account.allowedOutChannels = []"
+                            class="btn btn-default">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
-                    </span> 
+                    </span>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
-                <button type="button" class="btn btn-success" ng-click="ok()" ng-disabled="editAccountForm.$invalid">Save changes</button>
-            </div>
         </fieldset>
-    </form>
-</div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        <button type="button" class="btn btn-success" ng-click="ok()" ng-disabled="editAccountForm.$invalid">Save changes</button>
+    </div>
+</form>
