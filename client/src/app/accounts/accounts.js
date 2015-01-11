@@ -1,4 +1,8 @@
 angular.module('accounts', [
+    'accounts.list',
+    'accounts.new',
+    'accounts.edit',
+    'accounts.delete',
     'services.localizedMessages',
     'services.apiErrorHandler',
     'resources.account',
@@ -17,7 +21,7 @@ angular.module('accounts', [
         views: {
             'mainContentPane': {
                 templateUrl:'accounts/accounts-list.tpl.html',
-                controller:'AccountsViewCtrl',
+                controller:'AccountsListController',
                 resolve:{
                     accounts:['Account', function (Account) {
                         return Account.query();
@@ -42,7 +46,7 @@ angular.module('accounts', [
                         return new AccountCreationViewModel();
                     }]
                 },
-                controller: 'CreateAccountCtrl'
+                controller: 'NewAccountController'
             });
         }]
     })
@@ -59,7 +63,7 @@ angular.module('accounts', [
                         return Account.get({uuid: $stateParams.uuid});
                     }]
                 },
-                controller: 'UpdateAccountCtrl'
+                controller: 'EditAccountController'
             });
         }]
     })
@@ -76,160 +80,8 @@ angular.module('accounts', [
                         return Account.get({uuid: $stateParams.uuid});
                     }]
                 },
-                controller: 'DeleteAccountCtrl'
+                controller: 'DeleteAccountController'
             });
         }]
     });
-}])
-
-.controller('AccountsViewCtrl', ['$scope', '$state', 'accounts', function ($scope, $state, accounts) {
-    $scope.accounts = accounts;
-    $scope.accountsSearch = '';
-
-    $scope.editAccount = function (account) {
-        $state.go('accounts.edit', { uuid: account.uuid });
-    };
-
-    $scope.deleteAccount = function (account) {
-        $state.go('accounts.delete', { uuid: account.uuid });
-    };
-
-    $scope.$on('searchModelUpdated', function(event, searchModel) {
-        $scope.accountsSearch = searchModel;
-    });
-}])
-
-.controller('CreateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'newAccount', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, newAccount) {
-
-        $scope.newAccount = newAccount;
-        $scope.alerts = [];
-
-        $scope.dismissAlert = function() {
-            $scope.alerts.length = 0;
-        };
-
-        $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
-            if (outChannel === 'SIMSme') {
-                $scope.newAccount.subaccounts.simsmeSwitchTo('createNew');
-            }
-        };
-
-        $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
-            if (outChannel === 'SIMSme') {
-                $scope.newAccount.subaccounts.simsmeSwitchTo();
-            }
-        };
-
-        $scope.isValidInput = function() {
-            return ($scope.createAccountForm.$valid && (!$scope.newAccount.subaccounts.requiresSimsmeSubaccount() ? true : ($scope.newAccount.subaccounts.createsNewSimsmeAccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
-        };
-
-        $scope.onSimsmeAccountRefCreationActionChanged = function(action) {
-            switch(action) {
-                case 'createNew':
-                    $scope.createAccountForm.$removeControl($scope.referenceExistingSimsmeSubaccountForm);
-                    if (!($scope.createNewSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
-                        $scope.createAccountForm.$addControl($scope.createNewSimsmeSubaccountForm);
-                    }
-                    $scope.newAccount.subaccounts.simsmeSwitchTo('createNew');
-                    break;
-                case 'referenceExisting':
-                    $scope.createAccountForm.$removeControl($scope.createNewSimsmeSubaccountForm);
-                    if (!($scope.referenceExistingSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
-                        $scope.createAccountForm.$addControl($scope.referenceExistingSimsmeSubaccountForm);
-                    }
-                    $scope.newAccount.subaccounts.simsmeSwitchTo('referenceExisting');
-                    break;
-                default:
-                    throw new Error('Unknown action: ' + action);
-            }
-        };
-
-        $scope.ok = function () {
-            $scope.dismissAlert();
-            $scope.newAccount.save(
-                function(createdAccount) {
-                    $modalInstance.close(createdAccount);
-                    $state.go('accounts', {}, { reload: true }).then(function() {
-                        growl.success(localizedMessages.get('crud.account.create.success', {account: createdAccount}), {title: 'Account created'});
-                    });
-                },
-                function(httpResponse) {
-                    var alert = apiErrorHandler.mapToAlert(httpResponse);
-                    $scope.alerts.push(alert);
-                });
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-            $state.go('accounts');
-        };
-    }
-])
-
-.controller('UpdateAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToUpdate', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
-
-        $scope.accountToUpdate = accountToUpdate;
-        $scope.alerts = [];
-        $scope.availableOutChannels = AccountSettings.outChannels;
-
-        $scope.dismissAlert = function() {
-            $scope.alerts.length = 0;
-        };
-
-        $scope.ok = function () {
-            $scope.dismissAlert();
-            $scope.accountToUpdate.$update(
-                function(updatedAccount) {
-                    $modalInstance.close(updatedAccount);
-                    $state.go('accounts', {}, { reload: true }).then(function() {
-                        growl.success(localizedMessages.get('crud.account.update.success', {account: updatedAccount}), {title: 'Account updated'});
-                    });
-                },
-                function(httpResponse) {
-                    var alert = apiErrorHandler.mapToAlert(httpResponse);
-                    $scope.alerts.push(alert);
-                });
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-            $state.go('accounts');
-        };
-    }
-])
-
-.controller('DeleteAccountCtrl', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToDelete', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToDelete) {
-
-        $scope.accountToDelete = accountToDelete;
-        $scope.alerts = [];
-        $scope.availableOutChannels = AccountSettings.outChannels;
-
-        $scope.dismissAlert = function() {
-            $scope.alerts.length = 0;
-        };
-
-        $scope.ok = function () {
-            $scope.dismissAlert();
-            $scope.accountToDelete.$delete(
-                function() {
-                    $modalInstance.close($scope.accountToDelete);
-                    $state.go('accounts', {}, { reload: true }).then(function() {
-                        growl.success(localizedMessages.get('crud.account.delete.success', {account: $scope.accountToDelete}), {title: 'Account deleted'});
-                    });
-                },
-                function(httpResponse) {
-                    var alert = apiErrorHandler.mapToAlert(httpResponse);
-                    $scope.alerts.push(alert);
-                });
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-            $state.go('accounts');
-        };
-    }
-]);
+}]);

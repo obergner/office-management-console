@@ -24,7 +24,7 @@ describe('AccountsViewCtrl', function() {
 
     function runController($scope, $state, accounts) {
         inject(function($controller) {
-            $controller('AccountsViewCtrl', { $scope: $scope, $state: $state, accounts: accounts });
+            $controller('AccountsListController', { $scope: $scope, $state: $state, accounts: accounts });
         });
     }
 
