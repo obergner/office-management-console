@@ -50,31 +50,4 @@ describe('AccountsViewCtrl', function() {
             expect($scope.accounts).toBe(accounts);
         }));
     });
-
-    describe('editAccount(account)', function() {
-
-        it('should cause a transition into state accounts.edit', inject(function($location, $state, $timeout, $rootScope) {
-            $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) { 
-                console.log('$stateChangeStart: ' + event + ' - ' + fromState + ' -> ' + toState);
-            });
-            $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) { 
-                console.log('$stateChaneError: ' + event + ' - ' + fromState + ' -> ' + toState + ': ' + error);
-            });
-            $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) { 
-                console.log('$stateChangeSuccess: ' + event + ' - ' + fromState + ' -> ' + toState);
-            });
-            spyOn($state, 'go');
-            var $scope = $rootScope.$new();
-            var accounts = createMockAccountList();
-            runController($scope, $state, accounts);
-
-            $scope.editAccount(accounts[0]);
-            $rootScope.$apply();
-            // See: http://stackoverflow.com/questions/25502568/angularjs-ui-router-test-ui-sref
-            $timeout.flush();
-
-            expect($state.go).toHaveBeenCalledWith('accounts.edit', { uuid: accounts[0].uuid });
-            //expect($state.is('accounts.edit')).toBe(true);
-        }));
-    });
 });

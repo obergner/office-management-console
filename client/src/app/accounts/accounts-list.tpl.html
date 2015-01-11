@@ -26,12 +26,12 @@
 
                     <tbody>
                         <tr ng-repeat="account in accounts | filter:accountsSearch">
-                            <td ng-click="editAccount(account)">{{account.uuid}}</td>
-                            <td ng-click="editAccount(account)">{{account.name}}</td>
-                            <td ng-click="editAccount(account)">{{account.mmaId}}</td>
-                            <td ng-click="editAccount(account)">{{account.createdAt | date:'dd.MM.yyyy HH:mm:ss Z'}}</td>
-                            <td ng-click="editAccount(account)">{{account.allowedOutChannels.join(' >> ')}}</td>
-                            <td ng-click="deleteAccount(account)" class="btn btn-default">
+                            <td ui-sref="accounts.edit({ uuid: account.uuid })">{{account.uuid}}</td>
+                            <td ui-sref="accounts.edit({ uuid: account.uuid })">{{account.name}}</td>
+                            <td ui-sref="accounts.edit({ uuid: account.uuid })">{{account.mmaId}}</td>
+                            <td ui-sref="accounts.edit({ uuid: account.uuid })">{{account.createdAt | date:'dd.MM.yyyy HH:mm:ss Z'}}</td>
+                            <td ui-sref="accounts.edit({ uuid: account.uuid })">{{account.allowedOutChannels.join(' >> ')}}</td>
+                            <td ui-sref="accounts.delete({ uuid: account.uuid })" class="btn btn-default">
                                 <span class="glyphicon glyphicon-trash" tooltip-placement="left" tooltip="Delete account '{{account.name}}'"></span>
                             </td>
                         </tr>

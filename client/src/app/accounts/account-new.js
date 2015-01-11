@@ -21,7 +21,7 @@ angular.module('accounts.new', [
 
         $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.account.subaccounts.simsmeSwitchTo();
+                $scope.account.subaccounts.simsmeSwitchTo('none');
             }
         };
 
