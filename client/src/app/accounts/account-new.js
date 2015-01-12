@@ -15,18 +15,18 @@ angular.module('accounts.new', [
 
         $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.account.subaccounts.simsmeSwitchTo('createNew');
+                $scope.account.subaccounts.switchAccountRef('SIMSme', 'createNew');
             }
         };
 
         $scope.onOutChannelDeselected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
-                $scope.account.subaccounts.simsmeSwitchTo('none');
+                $scope.account.subaccounts.switchAccountRef('SIMSme', 'none');
             }
         };
 
         $scope.isValidInput = function() {
-            return ($scope.createAccountForm.$valid && (!$scope.account.subaccounts.requiresSimsmeSubaccount() ? true : ($scope.account.subaccounts.createsNewSimsmeAccount() ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
+            return ($scope.createAccountForm.$valid && (!$scope.account.subaccounts.requiresAccountRefOfType('SIMSme') ? true : ($scope.account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'createNew') ? $scope.createNewSimsmeSubaccountForm.$valid : $scope.referenceExistingSimsmeSubaccountForm.$valid)));
         };
 
         $scope.onSimsmeAccountRefCreationActionChanged = function(action) {
@@ -36,14 +36,14 @@ angular.module('accounts.new', [
                     if (!($scope.createNewSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
                         $scope.createAccountForm.$addControl($scope.createNewSimsmeSubaccountForm);
                     }
-                    $scope.account.subaccounts.simsmeSwitchTo('createNew');
+                    $scope.account.subaccounts.switchAccountRef('SIMSme', 'createNew');
                     break;
                 case 'referenceExisting':
                     $scope.createAccountForm.$removeControl($scope.createNewSimsmeSubaccountForm);
                     if (!($scope.referenceExistingSimsmeSubaccountForm.$name in $scope.createAccountForm)) {
                         $scope.createAccountForm.$addControl($scope.referenceExistingSimsmeSubaccountForm);
                     }
-                    $scope.account.subaccounts.simsmeSwitchTo('referenceExisting');
+                    $scope.account.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
                     break;
                 default:
                     throw new Error('Unknown action: ' + action);

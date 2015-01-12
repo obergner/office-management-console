@@ -2,6 +2,10 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
 
 .factory('AccountCreationViewModel', ['AccountCreation', function(AccountCreation){
 
+    /*
+    * Encapsulates the Office account proper to be created. 
+    */
+
     var AccountCreationViewModel = function() {
         this.AvailableOutChannels = ['FlashSMS', 'USSD', 'SIMSme'];
 
@@ -12,17 +16,26 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
         this.subaccounts = new AccountCreationViewModel.Subaccounts(this);
     };
 
-    AccountCreationViewModel.prototype.save = function(onSuccess, onError) {
-        var accountCreationResource = new AccountCreation();
-        accountCreationResource.name = this.name;
-        accountCreationResource.mmaId = this.mmaId;
-        accountCreationResource.allowedOutChannels = this.allowedOutChannels;
-        if (this.subaccounts.createsSimsmeAccountRef()) {
-            accountCreationResource.simsmeAccountRefCreation = this.subaccounts.simsme;
-        }
+    AccountCreationViewModel.prototype = {
+        constructor: AccountCreationViewModel,
 
-        accountCreationResource.$save(onSuccess, onError);
+        save: function(onSuccess, onError) {
+            var accountCreationResource = new AccountCreation();
+            accountCreationResource.name = this.name;
+            accountCreationResource.mmaId = this.mmaId;
+            accountCreationResource.allowedOutChannels = this.allowedOutChannels;
+            if (this.subaccounts.createsAccountRefOfType('SIMSme')) {
+                accountCreationResource.simsmeAccountRefCreation = this.subaccounts.simsme;
+            }
+
+            accountCreationResource.$save(onSuccess, onError);
+        },
     };
+
+    /*
+    * Collection of references to nested accounts that
+    * may potentially be created.
+    */
 
     AccountCreationViewModel.Subaccounts = function(parent) {
         this.parent = parent;
@@ -44,26 +57,27 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
             }
         };
 
-        this.simsme = _creations.simsme.none;
-        this.simsmeSwitchTo = function(action) {
-            this.simsme = _creations.simsme[action];
+        this.switchAccountRef = function(accountType, action) {
+            this[accountType.toLowerCase()] = _creations[accountType.toLowerCase()][action];
         };
+
+        this.simsme = _creations.simsme.none;
     };
 
-    AccountCreationViewModel.Subaccounts.prototype.requiresSimsmeSubaccount = function() {
-        return this.parent.allowedOutChannels.indexOf('SIMSme') > -1;
-    };
+    AccountCreationViewModel.Subaccounts.prototype = {
+        constructor: AccountCreationViewModel.Subaccounts,
 
-    AccountCreationViewModel.Subaccounts.prototype.createsSimsmeAccountRef = function() {
-        return this.simsme.action !== 'none';
-    };
+        requiresAccountRefOfType: function(accountType) {
+            return this.parent.allowedOutChannels.map(function(item) { return item.toLowerCase(); }).indexOf(accountType.toLowerCase()) > -1;
+        },
 
-    AccountCreationViewModel.Subaccounts.prototype.createsNewSimsmeAccount = function() {
-        return this.simsme.action === 'createNew';
-    };
+        createsAccountRefOfType: function(accountType) {
+            return this[accountType.toLowerCase()] && this[accountType.toLowerCase()].action !== 'none';
+        },
 
-    AccountCreationViewModel.Subaccounts.prototype.referencesExistingSimsmeAccount = function() {
-        return this.simsme.action === 'referenceExisting';
+        createsAccountRefOfTypeWithAction: function(accountType, action) {
+            return this[accountType.toLowerCase()] && this[accountType.toLowerCase()].action === action;
+        }
     };
 
     return AccountCreationViewModel;

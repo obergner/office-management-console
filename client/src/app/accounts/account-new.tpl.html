@@ -106,12 +106,12 @@
             </div>
         </fieldset>
         <fieldset id="create-account-form-simsme-account-fields"
-            ng-disabled="!account.subaccounts.requiresSimsmeSubaccount()">
+            ng-disabled="!account.subaccounts.requiresAccountRefOfType('SIMSme')">
             <legend>SIMSme account</legend>
             <div class="row-fluid">
                 <div class="form-group"
                     ng-form="createNewSimsmeSubaccountForm"
-                    ng-show="!account.subaccounts.requiresSimsmeSubaccount() || account.subaccounts.createsNewSimsmeAccount()">
+                    ng-show="!account.subaccounts.requiresAccountRefOfType('SIMSme') || account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'createNew')">
                     <label for="simsmeAccountName"
                         class="col-md-2 control-label"
                         popover-placement="left"
@@ -137,7 +137,7 @@
                 </div>
                 <div class="form-group"
                     ng-form="referenceExistingSimsmeSubaccountForm"
-                    ng-show="account.subaccounts.referencesExistingSimsmeAccount()">
+                    ng-show="account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')">
                     <label for="simsmeAccountGuid"
                         class="col-md-2 control-label"
                         popover-placement="left"
@@ -148,7 +148,7 @@
                         name="simsmeAccountGuid"
                         class="form-control"
                         placeholder="Referenced SIMSme account GUID"
-                        ng-required="account.subaccounts.referencesExistingSimsmeAccount()"
+                        ng-required="account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')"
                         ng-model="account.subaccounts.simsme.existingSimsmeGuid"
                         ng-pattern="/^\d{1,3}:\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$/">
                         <span ng-show="referenceExistingSimsmeSubaccountForm.simsmeAccountGuid.$error.pattern" class="help-block">GUID is not a valid SIMSme GUID.</span>

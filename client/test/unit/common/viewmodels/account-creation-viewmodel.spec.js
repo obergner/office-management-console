@@ -35,10 +35,24 @@ describe('viewmodel: AccountCreationViewModel', function () {
             expect(accountCreationViewModel.subaccounts.simsme).toBeDefined();
             expect(accountCreationViewModel.subaccounts.simsme.action).toEqual('none');
 
-            expect(accountCreationViewModel.subaccounts.requiresSimsmeSubaccount).toBeDefined();
-            expect(accountCreationViewModel.subaccounts.requiresSimsmeSubaccount()).toBeFalsy();
+            expect(accountCreationViewModel.subaccounts.requiresAccountRefOfType('SIMSme')).toBeDefined();
+            expect(accountCreationViewModel.subaccounts.requiresAccountRefOfType('SIMSme')).toBeFalsy();
             accountCreationViewModel.allowedOutChannels.push('SIMSme');
-            expect(accountCreationViewModel.subaccounts.requiresSimsmeSubaccount()).toBeTruthy();
+            expect(accountCreationViewModel.subaccounts.requiresAccountRefOfType('SIMSme')).toBeTruthy();
+
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfType).toBeDefined();
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfType('Nonsense')).toBeFalsy();
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfType('SIMSme')).toBeFalsy();
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'createNew');
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfType('SIMSme')).toBeTruthy();
+
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfTypeWithAction).toBeDefined();
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfTypeWithAction('Nonsense', 'rubbish')).toBeFalsy();
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'rubbish')).toBeFalsy();
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'createNew');
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'createNew')).toBeTruthy();
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
+            expect(accountCreationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')).toBeTruthy();
         });
 
         it('should remember CreateNewSimsmeAccountRefCreation', function() {
@@ -47,16 +61,16 @@ describe('viewmodel: AccountCreationViewModel', function () {
 
             var accountCreationViewModel = new AccountCreationViewModel();
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('createNew');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'createNew');
             accountCreationViewModel.subaccounts.simsme.name = nameToRemember;
             accountCreationViewModel.subaccounts.simsme.imageBase64Jpeg = imageToRemember;
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('none');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'none');
             expect(accountCreationViewModel.subaccounts.simsme.action).toEqual('none');
             expect(accountCreationViewModel.subaccounts.simsme.name).not.toBeDefined();
             expect(accountCreationViewModel.subaccounts.simsme.imageBase64Jpeg).not.toBeDefined();
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('createNew');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'createNew');
             expect(accountCreationViewModel.subaccounts.simsme.action).toEqual('createNew');
             expect(accountCreationViewModel.subaccounts.simsme.name).toEqual(nameToRemember);
             expect(accountCreationViewModel.subaccounts.simsme.imageBase64Jpeg).toEqual(imageToRemember);
@@ -65,7 +79,7 @@ describe('viewmodel: AccountCreationViewModel', function () {
         it('should expose additional methods on CreateNewSimsmeAccountRefCreation', function() {
             var accountCreationViewModel = new AccountCreationViewModel();
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('createNew');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'createNew');
             expect(accountCreationViewModel.subaccounts.simsme.useCustomName).toBeDefined();
             expect(accountCreationViewModel.subaccounts.simsme.usesCustomName).toBeDefined();
 
@@ -84,14 +98,14 @@ describe('viewmodel: AccountCreationViewModel', function () {
 
             var accountCreationViewModel = new AccountCreationViewModel();
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('referenceExisting');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
             accountCreationViewModel.subaccounts.simsme.existingSimsmeGuid = simsmeGuidToRemember;
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('none');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'none');
             expect(accountCreationViewModel.subaccounts.simsme.action).toEqual('none');
             expect(accountCreationViewModel.subaccounts.simsme.existingSimsmeGuid).not.toBeDefined();
 
-            accountCreationViewModel.subaccounts.simsmeSwitchTo('referenceExisting');
+            accountCreationViewModel.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
             expect(accountCreationViewModel.subaccounts.simsme.action).toEqual('referenceExisting');
             expect(accountCreationViewModel.subaccounts.simsme.existingSimsmeGuid).toEqual(simsmeGuidToRemember);
         });
