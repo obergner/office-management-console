@@ -7,15 +7,11 @@ angular.module('accounts.delete', [
     function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToDelete) {
 
         $scope.account = accountToDelete;
-        $scope.alerts = [];
+        $scope.apiErrors = apiErrorHandler; 
         $scope.availableOutChannels = AccountSettings.outChannels;
 
-        $scope.dismissAlert = function() {
-            $scope.alerts.length = 0;
-        };
-
         $scope.ok = function () {
-            $scope.dismissAlert();
+            $scope.apiErrors.dismissAlerts();
             $scope.account.$delete(
                 function() {
                     $modalInstance.close($scope.account);
@@ -24,12 +20,12 @@ angular.module('accounts.delete', [
                     });
                 },
                 function(httpResponse) {
-                    var alert = apiErrorHandler.mapToAlert(httpResponse);
-                    $scope.alerts.push(alert);
+                    $scope.apiErrors.handleApiErrorResponse(httpResponse);
                 });
         };
 
         $scope.cancel = function () {
+            $scope.apiErrors.dismissAlerts();
             $modalInstance.dismiss('cancel');
             $state.go('accounts');
         };

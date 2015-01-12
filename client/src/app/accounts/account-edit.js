@@ -7,15 +7,11 @@ angular.module('accounts.edit', [
     function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
 
         $scope.account = accountToUpdate;
-        $scope.alerts = [];
+        $scope.apiErrors = apiErrorHandler;
         $scope.availableOutChannels = AccountSettings.outChannels;
 
-        $scope.dismissAlert = function() {
-            $scope.alerts.length = 0;
-        };
-
         $scope.ok = function () {
-            $scope.dismissAlert();
+            $scope.apiErrors.dismissAlerts();
             $scope.account.$update(
                 function(updatedAccount) {
                     $modalInstance.close(updatedAccount);
@@ -24,12 +20,12 @@ angular.module('accounts.edit', [
                     });
                 },
                 function(httpResponse) {
-                    var alert = apiErrorHandler.mapToAlert(httpResponse);
-                    $scope.alerts.push(alert);
+                    $scope.apiErrors.handleApiErrorResponse(httpResponse);
                 });
         };
 
         $scope.cancel = function () {
+            $scope.apiErrors.dismissAlerts();
             $modalInstance.dismiss('cancel');
             $state.go('accounts');
         };

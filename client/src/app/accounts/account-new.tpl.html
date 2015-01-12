@@ -10,9 +10,9 @@
     </div>
     <div class="modal-body">
         <div>
-            <alert ng-repeat="alert in alerts"
+            <alert ng-repeat="alert in apiErrors.alerts"
             type="{{alert.type}}"
-            close="dismissAlert()">
+            close="apiErrors.dismissAlerts()">
             <strong>{{alert.status}}|{{alert.statusText}}</strong><br><br>
             <dl>
                 <dt>Code</dt>

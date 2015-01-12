@@ -9,6 +9,21 @@
         <h4 class="modal-title" id="account-delete-modal-label">Delete account {{account.uuid}} | {{account.name}}?</h4>
     </div>
     <div class="modal-body">
+        <div>
+            <alert ng-repeat="alert in apiErrors.alerts"
+            type="{{alert.type}}"
+            close="apiErrors.dismissAlerts()">
+            <strong>{{alert.status}}|{{alert.statusText}}</strong><br><br>
+            <dl>
+                <dt>Code</dt>
+                <dd>{{alert.code}}</dd>
+            </dl>
+            <dl>
+                <dt>Message</dt>
+                <dd>{{alert.message}}</dd>
+            </dl>
+            </alert>
+        </div>
         <fieldset id="delete-account-form-mandatory-fields" disabled>
             <legend>Office account</legend>
             <div class="row-fluid">

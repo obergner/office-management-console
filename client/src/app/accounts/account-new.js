@@ -7,11 +7,7 @@ angular.module('accounts.new', [
     function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, newAccount) {
 
         $scope.account = newAccount;
-        $scope.alerts = [];
-
-        $scope.dismissAlert = function() {
-            $scope.alerts.length = 0;
-        };
+        $scope.apiErrors = apiErrorHandler;
 
         $scope.onOutChannelSelected = function(outChannel, allOutChannels) {
             if (outChannel === 'SIMSme') {
@@ -51,7 +47,7 @@ angular.module('accounts.new', [
         };
 
         $scope.ok = function () {
-            $scope.dismissAlert();
+            $scope.apiErrors.dismissAlerts();
             $scope.account.save(
                 function(createdAccount) {
                     $modalInstance.close(createdAccount);
@@ -60,12 +56,12 @@ angular.module('accounts.new', [
                     });
                 },
                 function(httpResponse) {
-                    var alert = apiErrorHandler.mapToAlert(httpResponse);
-                    $scope.alerts.push(alert);
+                    $scope.apiErrors.handleApiErrorResponse(httpResponse);
                 });
         };
 
         $scope.cancel = function () {
+            $scope.apiErrors.dismissAlerts();
             $modalInstance.dismiss('cancel');
             $state.go('accounts');
         };
