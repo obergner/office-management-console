@@ -1,10 +1,5 @@
-angular.module('accounts.edit', [
-    'services.localizedMessages',
-    'services.apiErrorHandler'
-])
-
-.controller('EditAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToUpdate', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
+(function() {
+    function EditAccountController($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
 
         $scope.account = accountToUpdate;
         $scope.apiErrors = apiErrorHandler;
@@ -30,4 +25,12 @@ angular.module('accounts.edit', [
             $state.go('accounts');
         };
     }
-]);
+
+    angular.module('accounts.edit', [
+        'services.localizedMessages',
+        'services.apiErrorHandler'
+    ])
+
+    .controller('EditAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToUpdate', 
+        EditAccountController]);
+})();

@@ -1,30 +1,34 @@
-angular.module('services.apiErrorHandler', []);
-angular.module('services.apiErrorHandler').factory('apiErrorHandler', [function(){
+(function() {
+    function ApiErrorHandlerFactory() {
+        var apiErrorHandler = {
+            alerts: [],
 
-    var apiErrorHandler = {
-        alerts: [],
+            dismissAlerts: function() {
+                this.alerts.length = 0;
+            },
 
-        dismissAlerts: function() {
-            this.alerts.length = 0;
-        },
+            mapToAlert: function(httpResponse) {
+                var alert = httpResponse.data;
+                alert.status = httpResponse.status;
+                alert.statusText = httpResponse.statusText;
+                if (httpResponse.status >= 300 && httpResponse.status < 500) {
+                    alert.type = 'warning';
+                } else {
+                    alert.type = 'error';
+                }
+                return alert;
+            },
 
-        mapToAlert: function(httpResponse) {
-            var alert = httpResponse.data;
-            alert.status = httpResponse.status;
-            alert.statusText = httpResponse.statusText;
-            if (httpResponse.status >= 300 && httpResponse.status < 500) {
-                alert.type = 'warning';
-            } else {
-                alert.type = 'error';
+            handleApiErrorResponse: function(httpResponse) {
+                var alert = this.mapToAlert(httpResponse);
+                this.alerts.push(alert);
             }
-            return alert;
-        },
+        };
 
-        handleApiErrorResponse: function(httpResponse) {
-            var alert = this.mapToAlert(httpResponse);
-            this.alerts.push(alert);
-        }
-    };
+        return apiErrorHandler;
+    }
 
-    return apiErrorHandler;
-}]);
+    angular.module('services.apiErrorHandler', [])
+
+    .factory('apiErrorHandler', [ApiErrorHandlerFactory]);
+})();

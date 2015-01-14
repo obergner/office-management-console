@@ -1,26 +1,29 @@
-angular.module('resources.account', ['ngResource'])
+(function() {
+    function AccountFactory($resource) {
+        var Account = $resource('/accounts/uuid/:uuid', { uuid: '@uuid' } , {
+            query: {
+                method: 'GET',
+                url: '/accounts',
+                isArray: true
+            },
+            save: {
+                method: 'POST',
+                url: '/accounts'
+            },
+            update: {
+                method: 'PUT',
+                params: { uuid: '@uuid' }
+            },
+            get: {
+                method: 'GET',
+                url: '/accounts/uuid/:uuid'
+            } 
+        });
 
-.factory('Account', ['$resource', function($resource){
+        return Account;
+    }
 
-    var Account = $resource('/accounts/uuid/:uuid', { uuid: '@uuid' } , {
-        query: {
-            method: 'GET',
-            url: '/accounts',
-            isArray: true
-        },
-        save: {
-            method: 'POST',
-            url: '/accounts'
-        },
-        update: {
-            method: 'PUT',
-            params: { uuid: '@uuid' }
-        },
-        get: {
-            method: 'GET',
-            url: '/accounts/uuid/:uuid'
-        } 
-    });
+    angular.module('resources.account', ['ngResource'])
 
-    return Account;
-}]);
+    .factory('Account', ['$resource', AccountFactory]);
+})();

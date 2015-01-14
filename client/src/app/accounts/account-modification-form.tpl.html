@@ -1,0 +1,177 @@
+<!-- Modal -->
+<form name="accountForm" class="form-horizontal" novalidate>
+    <div class="modal-header">
+        <button type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+            ng-click="cancel()">&times;</button>
+        <h4 class="modal-title" id="account-form-label">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+        <div>
+            <alert ng-repeat="alert in apiErrors"
+            type="{{alert.type}}"
+            close="apiErrors.length = 0">
+            <strong>{{alert.status}}|{{alert.statusText}}</strong><br><br>
+            <dl>
+                <dt>Code</dt>
+                <dd>{{alert.code}}</dd>
+            </dl>
+            <dl>
+                <dt>Message</dt>
+                <dd>{{alert.message}}</dd>
+            </dl>
+            <ul class="list-group"
+                ng-show="alert.fieldValidationErrors"
+                ng-repeat="fieldValidationError in alert.fieldValidationErrors">
+                <li class="list-group-item">
+                <h4 class="list-group-item-heading">Field</h4>
+                <p class="list-group-item-text">{{fieldValidationError.field}}</p>
+                </li>
+                <li class="list-group-item">
+                <h4 class="list-group-item-heading">Message</h4>
+                <p class="list-group-item-text">{{fieldValidationError.message}}</p>
+                </li>
+            </ul>
+            </alert>
+        </div>
+        <fieldset id="account-form-mandatory-fields">
+            <legend>Office account</legend>
+            <div class="row-fluid">
+                <div class="form-group">
+                    <label for="name"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="Account name"
+                        popover="Must be between 5 and 30 characters long.">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                        name="name"
+                        class="form-control"
+                        ng-class="{ 'has-error': accountForm.name.$invalid && !accountForm.name.$pristine }"
+                        placeholder="Name"
+                        required
+                        ng-model="account.name"
+                        ng-minlength="5"
+                        ng-maxlength="30">
+                        <span ng-show="accountForm.name.$error.minlength" class="help-block">Name is too short.</span>
+                        <span ng-show="accountForm.name.$error.maxlength" class="help-block">Name is too long.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mma"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="Mobile Messaging Account"
+                        popover="Must be the ID of an existing MMA in CCC">MMA</label>
+                    <div class="col-md-8">
+                        <input type="number"
+                        name="mma"
+                        class="form-control"
+                        ng-class="{ 'has-error': accountForm.mma.$invalid && !accountForm.mma.$pristine }"
+                        placeholder="MMA"
+                        required
+                        ng-model="account.mmaId">
+                        <span ng-show="accountForm.mma.$invalid && !accountForm.mma.$pristine"
+                            class="help-block">MMA is required.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputAllowedOutChannels"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="Out channels"
+                        popover="Ordered list of out channels to try for this account">Out channels</label>
+                    <div id="inputAllowedOutChannels" class="col-md-7">
+                        <ui-select multiple
+                        ng-model="account.allowedOutChannels"
+                        theme="bootstrap"
+                        close-on-select="false"
+                        on-select="onOutChannelSelected($item, $model)"
+                        on-remove="onOutChannelDeselected($item, $model)">
+                        <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
+                        <ui-select-choices repeat="outChannel in account.AvailableOutChannels | filter: $select.search">
+                        <span ng-bind-html="outChannel | highlight: $select.search"></span>
+                        </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <span class="col-md-1">
+                        <button ng-click="account.allowedOutChannels = []"
+                            class="btn btn-default">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset id="account-form-simsme-account-fields"
+            ng-disabled="!account.subaccounts.requiresAccountRefOfType('SIMSme')">
+            <legend>SIMSme account</legend>
+            <div class="row-fluid">
+                <div class="form-group"
+                    ng-form="createNewSimsmeSubaccountForm"
+                    ng-show="!account.subaccounts.requiresAccountRefOfType('SIMSme') || account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'createNew')">
+                    <label for="simsmeAccountName"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="SIMSme account name"
+                        popover="Must be between 5 and 30 characters long.">Name</label>
+                    <div class="col-md-7"
+                        ng-dblclick="account.subaccounts.simsme.useCustomName()">
+                        <input type="text" 
+                        name="simsmeAccountName"
+                        class="form-control"
+                        placeholder="{{account.name}}"
+                        ng-model="account.subaccounts.simsme.name"
+                        ng-pattern="/^.{5,30}$/"
+                        ng-disabled="!account.subaccounts.simsme.usesCustomName()">
+                        <span ng-show="createNewSimsmeSubaccountForm.simsmeAccountName.$error.pattern" class="help-block">Name must be between 5 and 30 characters long.</span>
+                    </div>
+                    <span class="col-md-1">
+                        <button ng-click="account.subaccounts.simsme.name = null"
+                            class="btn btn-default">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </span>
+                </div>
+                <div class="form-group"
+                    ng-form="referenceExistingSimsmeSubaccountForm"
+                    ng-show="account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')">
+                    <label for="simsmeAccountGuid"
+                        class="col-md-2 control-label"
+                        popover-placement="left"
+                        popover-title="SIMSme account GUID"
+                        popover="Example: '0:{A45F3D1F-4444-78F3-A45F-FF10FF10FF10}'.">GUID</label>
+                    <div class="col-md-8">
+                        <input type="text" 
+                        name="simsmeAccountGuid"
+                        class="form-control"
+                        placeholder="Referenced SIMSme account GUID"
+                        ng-required="account.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')"
+                        ng-model="account.subaccounts.simsme.existingSimsmeGuid"
+                        ng-pattern="/^\d{1,3}:\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$/">
+                        <span ng-show="referenceExistingSimsmeSubaccountForm.simsmeAccountGuid.$error.pattern" class="help-block">GUID is not a valid SIMSme GUID.</span>
+                        <span ng-show="referenceExistingSimsmeSubaccountForm.simsmeAccountGuid.$error.required" class="help-block">GUID is required.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="btn-group subaccount-ref-mode-selectors" role="group">
+                        <button class="btn btn-primary btn-xs"
+                            ng-model="account.subaccounts.simsme.action" 
+                            ng-click="onSimsmeAccountRefCreationActionChanged('createNew')"
+                            btn-radio="'createNew'">Create new</button>
+                        <button class="btn btn-primary btn-xs"
+                            ng-model="account.subaccounts.simsme.action"
+                            ng-click="onSimsmeAccountRefCreationActionChanged('referenceExisting')"
+                            btn-radio="'referenceExisting'">Use existing</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        <button type="button" class="btn btn-success" ng-click="ok()" ng-disabled="!isValidInput()">Save changes</button>
+    </div>
+</form>

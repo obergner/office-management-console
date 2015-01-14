@@ -1,18 +1,9 @@
-angular.module('accounts.new', [
-    'services.localizedMessages',
-    'services.apiErrorHandler'
-])
+(function() {
+    function NewAccountController($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, newAccount) {
+        $scope.account = newAccount;
 
-.controller('NewAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'newAccount', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, newAccount) {
-        /*
-        * Inherit from our base controller. A little ugly, but well ...
-        */
-        BaseAccountController.call(this, $scope, newAccount, 'createAccountForm', apiErrorHandler);
-
-        $scope.ok = function () {
-            $scope.apiErrors.dismissAlerts();
-            $scope.account.save(
+        $scope.onSave = function(account, apiErrors) {
+            account.save(
                 function(createdAccount) {
                     $modalInstance.close(createdAccount);
                     $state.go('accounts', {}, { reload: true }).then(function() {
@@ -20,14 +11,22 @@ angular.module('accounts.new', [
                     });
                 },
                 function(httpResponse) {
-                    $scope.apiErrors.handleApiErrorResponse(httpResponse);
+                    var alerts = apiErrorHandler.mapToAlert(httpResponse);
+                    apiErrors.push(alerts);
                 });
         };
 
-        $scope.cancel = function () {
-            $scope.apiErrors.dismissAlerts();
+        $scope.onCancel = function(account, apiErrors) {
             $modalInstance.dismiss('cancel');
             $state.go('accounts');
         };
     }
-]);
+
+    angular
+    .module('accounts.new', [
+        'accounts.accountModificationForm',
+        'services.localizedMessages',
+        'services.apiErrorHandler'
+    ])
+    .controller('NewAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'newAccount', NewAccountController]);
+})();

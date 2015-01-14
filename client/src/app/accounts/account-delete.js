@@ -1,10 +1,5 @@
-angular.module('accounts.delete', [
-    'services.localizedMessages',
-    'services.apiErrorHandler'
-])
-
-.controller('DeleteAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToDelete', 
-    function ($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToDelete) {
+(function() {
+    function DeleteAccountController($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToDelete) {
 
         $scope.account = accountToDelete;
         $scope.apiErrors = apiErrorHandler; 
@@ -30,4 +25,12 @@ angular.module('accounts.delete', [
             $state.go('accounts');
         };
     }
-]);
+
+    angular.module('accounts.delete', [
+        'services.localizedMessages',
+        'services.apiErrorHandler'
+    ])
+
+    .controller('DeleteAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToDelete',
+        DeleteAccountController]);
+})();
