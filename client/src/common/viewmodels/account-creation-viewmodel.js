@@ -25,7 +25,7 @@ angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
             accountCreationResource.mmaId = this.mmaId;
             accountCreationResource.allowedOutChannels = this.allowedOutChannels;
             if (this.subaccounts.createsAccountRefOfType('SIMSme')) {
-                accountCreationResource.simsmeAccountRefCreation = this.subaccounts.simsme;
+                accountCreationResource.simsmeAccountRefModification = this.subaccounts.simsme;
             }
 
             accountCreationResource.$save(onSuccess, onError);

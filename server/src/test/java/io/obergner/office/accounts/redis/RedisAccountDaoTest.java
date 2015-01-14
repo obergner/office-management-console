@@ -2,6 +2,7 @@ package io.obergner.office.accounts.redis;
 
 import io.obergner.office.ApiErrorCode;
 import io.obergner.office.accounts.Account;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import io.obergner.office.test.EmbeddedRedisServer;
 import io.obergner.office.test.RedisTestAccounts;
 import org.junit.AfterClass;
@@ -78,7 +79,7 @@ public class RedisAccountDaoTest {
     }
 
     @Test
-    public void createAccountShouldStoreAccountInRedis() throws Exception {
+    public void create_account_should_store_account_in_redis() throws Exception {
         final String accountName = this.testName.getMethodName();
         final long mmaId = 17866534277L;
         final String[] allowedOutChannels = new String[]{"Allowed_Out_Channel_1", "Allowed_Out_Channel_2"};
@@ -103,6 +104,23 @@ public class RedisAccountDaoTest {
 
         final String secondaryMmaIdIndex = EMBEDDED_REDIS_SERVER.client().hget(AccountSchema.Keys.ACCOUNT_MMA_INDEX, String.valueOf(newAccount.mmaId));
         assertEquals(newAccount.uuid.toString(), secondaryMmaIdIndex);
+    }
+
+    @Test
+    public void create_account_should_store_reference_to_existing_simsme_account_in_redis() throws Exception {
+        final String accountName = this.testName.getMethodName();
+        final long mmaId = 17866534277L;
+        final String[] allowedOutChannels = new String[]{"Allowed_Out_Channel_1", "Allowed_Out_Channel_2"};
+        final SimsmeGuid simsmeGuid = new SimsmeGuid(0, UUID.randomUUID());
+
+        final Account newAccount = OBJECT_UNDER_TEST.createAccount(accountName, mmaId, allowedOutChannels, simsmeGuid);
+        assertNotNull(newAccount);
+
+        final boolean accountHasBeenStored = EMBEDDED_REDIS_SERVER.client().hexists(AccountSchema.Keys.accountUuid(newAccount.uuid), AccountSchema.Fields.UUID);
+        assertTrue(accountHasBeenStored);
+
+        final String storedSimsmeGuid = EMBEDDED_REDIS_SERVER.client().hget(AccountSchema.Keys.accountUuid(newAccount.uuid), AccountSchema.Fields.SIMSME_ACCOUNT_GUID);
+        assertEquals(newAccount.simsmeAccountRef.simsmeGuid, SimsmeGuid.parse(storedSimsmeGuid));
     }
 
     @Test
@@ -201,6 +219,45 @@ public class RedisAccountDaoTest {
 
         final String oldMmaMapping = EMBEDDED_REDIS_SERVER.client().hget(AccountSchema.Keys.ACCOUNT_MMA_INDEX, String.valueOf(originalAccount.mmaId));
         assertNull(oldMmaMapping);
+    }
+
+    @Test
+    public void update_account_should_add_reference_to_simsme_account() throws Exception {
+        final SimsmeGuid simsmeGuidToAdd = new SimsmeGuid(0, UUID.randomUUID());
+
+        final Account originalAccount = RedisTestAccounts.existingAccountWithoutSimsmeAccountRef();
+
+        final Account updatedAccount = new Account(originalAccount.uuid, originalAccount.name, 51234009873425L, originalAccount.createdAt, originalAccount.allowedOutChannels, simsmeGuidToAdd);
+
+        OBJECT_UNDER_TEST.updateAccount(updatedAccount);
+
+        final String updatedAccountSimsmeRef = EMBEDDED_REDIS_SERVER.client().hget(AccountSchema.Keys.accountUuid(updatedAccount.uuid), AccountSchema.Fields.SIMSME_ACCOUNT_GUID);
+        assertEquals(updatedAccount.simsmeAccountRef.simsmeGuid, SimsmeGuid.parse(updatedAccountSimsmeRef));
+    }
+
+    @Test
+    public void update_account_should_update_reference_to_simsme_account() throws Exception {
+        final SimsmeGuid updatedSimsmeGuid = new SimsmeGuid(0, UUID.randomUUID());
+
+        final Account originalAccount = RedisTestAccounts.existingAccountWithSimsmeAccountRef();
+
+        final Account updatedAccount = new Account(originalAccount.uuid, originalAccount.name, 51234009873425L, originalAccount.createdAt, originalAccount.allowedOutChannels, updatedSimsmeGuid);
+
+        OBJECT_UNDER_TEST.updateAccount(updatedAccount);
+
+        final String updatedAccountSimsmeRef = EMBEDDED_REDIS_SERVER.client().hget(AccountSchema.Keys.accountUuid(updatedAccount.uuid), AccountSchema.Fields.SIMSME_ACCOUNT_GUID);
+        assertEquals(updatedAccount.simsmeAccountRef.simsmeGuid, SimsmeGuid.parse(updatedAccountSimsmeRef));
+    }
+
+    @Test
+    public void update_account_should_delete_reference_to_simsme_account() throws Exception {
+        final Account originalAccount = RedisTestAccounts.existingAccountWithSimsmeAccountRef();
+
+        final Account updatedAccount = new Account(originalAccount.uuid, originalAccount.name, 51234009873425L, originalAccount.createdAt, originalAccount.allowedOutChannels, (SimsmeGuid) null);
+
+        OBJECT_UNDER_TEST.updateAccount(updatedAccount);
+
+        assertFalse(EMBEDDED_REDIS_SERVER.client().hexists(AccountSchema.Keys.accountUuid(updatedAccount.uuid), AccountSchema.Fields.SIMSME_ACCOUNT_GUID));
     }
 
     @Test

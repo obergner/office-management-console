@@ -1,13 +1,15 @@
 package io.obergner.office.accounts.impl;
 
+import io.obergner.office.accounts.AbstractAccountModification;
 import io.obergner.office.accounts.Account;
 import io.obergner.office.accounts.AccountCreation;
 import io.obergner.office.accounts.AccountDao;
 import io.obergner.office.accounts.AccountManager;
+import io.obergner.office.accounts.AccountUpdate;
 import io.obergner.office.accounts.subaccounts.simsme.CreateNewSimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.ExistingSimsmeAccountRefCreation;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountManager;
-import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefCreation;
+import io.obergner.office.accounts.subaccounts.simsme.SimsmeAccountRefModification;
 import io.obergner.office.accounts.subaccounts.simsme.SimsmeGuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +18,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 
 public class CoordinatingAccountManager implements AccountManager {
@@ -45,61 +45,48 @@ public class CoordinatingAccountManager implements AccountManager {
     }
 
     @Override
-    public Account createAccount(final String name, final long mmaId, final String[] allowedOutChannels) {
-        hasText(name, "Argument 'name' must neither be null nor blank");
-        notEmpty(allowedOutChannels, "Argument 'allowedOutChannels' must not be empty");
-        this.log.info("Creating account using [name:{}|mmaId:{}|allowedOutChannels:{}] ...", name, mmaId, allowedOutChannels);
-        final Account account = this.accountDao.createAccount(name, mmaId, allowedOutChannels);
-        this.log.info("Successfully created {}", account);
-        return account;
-    }
-
-    @Override
-    public Account createAccount(final Account account) {
-        notNull(account, "Argument 'account' must not be null");
-        this.log.info("Creating {} ...", account);
-        final Account createdAccount = this.accountDao.createAccount(account);
-        this.log.info("Successfully created {}", createdAccount);
-        return createdAccount;
-    }
-
-    @Override
     public Account createAccount(final AccountCreation accountCreation) {
         notNull(accountCreation, "Argument 'accountCreation' must not be null");
         this.log.info("Creating account using {} ...", accountCreation);
-        final SimsmeGuid simsmeAccountRef = createOrReferenceSimsmeSubaccountIfNecessary(accountCreation);
+        final SimsmeGuid simsmeAccountRef = modifySimsmeSubaccountIfNecessary(accountCreation);
         final Account accountToStore = Account.newAccountWithReferenceToExistingSimsmeAccount(accountCreation.name, accountCreation.mmaId, accountCreation.allowedOutChannels, simsmeAccountRef);
         final Account createdAccount = this.accountDao.createAccount(accountToStore);
         this.log.info("Successfully created {}", createdAccount);
         return createdAccount;
     }
 
-    private SimsmeGuid createOrReferenceSimsmeSubaccountIfNecessary(final AccountCreation accountCreation) {
-        if (!accountCreation.createsSimsmeAccountRef()) {
+    private SimsmeGuid modifySimsmeSubaccountIfNecessary(final AbstractAccountModification accountModification) {
+        if (accountModification.simsmeAccountRefModification == null) {
             return null;
         }
-        final SimsmeAccountRefCreation simsmeAccountRefCreation = accountCreation.simsmeAccountRefCreation;
+        final SimsmeAccountRefModification simsmeAccountRefModification = accountModification.simsmeAccountRefModification;
         final SimsmeGuid simsmeAccountRef;
-        switch (simsmeAccountRefCreation.action) {
+        switch (simsmeAccountRefModification.action) {
+            case none:
+            case deleteReference:
+                simsmeAccountRef = null;
+                break;
             case referenceExisting:
-                simsmeAccountRef = ExistingSimsmeAccountRefCreation.class.cast(simsmeAccountRefCreation).existingSimsmeGuid;
+                simsmeAccountRef = ExistingSimsmeAccountRefCreation.class.cast(simsmeAccountRefModification).existingSimsmeGuid;
                 break;
             case createNew:
-                final CreateNewSimsmeAccountRefCreation createNewSimsmeAccountRefCreation = CreateNewSimsmeAccountRefCreation.class.cast(simsmeAccountRefCreation);
-                final String simsmeAccountName = StringUtils.hasText(createNewSimsmeAccountRefCreation.name) ? createNewSimsmeAccountRefCreation.name : accountCreation.name;
+                final CreateNewSimsmeAccountRefCreation createNewSimsmeAccountRefCreation = CreateNewSimsmeAccountRefCreation.class.cast(simsmeAccountRefModification);
+                final String simsmeAccountName = StringUtils.hasText(createNewSimsmeAccountRefCreation.name) ? createNewSimsmeAccountRefCreation.name : accountModification.name;
                 simsmeAccountRef = this.simsmeAccountManager.createAccount(simsmeAccountName, createNewSimsmeAccountRefCreation.imageBase64Jpeg).guid;
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported SIMSme account creation action type: " + simsmeAccountRefCreation.action);
+                throw new IllegalArgumentException("Unsupported SIMSme account creation action type: " + simsmeAccountRefModification.action);
         }
         return simsmeAccountRef;
     }
 
     @Override
-    public Account updateAccount(final Account account) {
-        notNull(account, "Argument 'account' must not be null");
-        this.log.info("Updating {} ...", account);
-        final Account updatedAccount = this.accountDao.updateAccount(account);
+    public Account updateAccount(final AccountUpdate accountUpdate) {
+        notNull(accountUpdate, "Argument 'accountUpdate' must not be null");
+        this.log.info("Updating account using {} ...", accountUpdate);
+        final SimsmeGuid simsmeAccountRef = modifySimsmeSubaccountIfNecessary(accountUpdate);
+        final Account accountToStore = new Account(accountUpdate.uuid, accountUpdate.name, accountUpdate.mmaId, 0L, accountUpdate.allowedOutChannels, simsmeAccountRef);
+        final Account updatedAccount = this.accountDao.updateAccount(accountToStore);
         this.log.info("Successfully updated {}", updatedAccount);
         return updatedAccount;
     }

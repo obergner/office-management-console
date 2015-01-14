@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import static org.springframework.util.Assert.notNull;
 
-public final class ExistingSimsmeAccountRefCreation extends SimsmeAccountRefModification {
+public final class SimsmeAccountRefDeletion extends SimsmeAccountRefModification {
 
-    private static final long serialVersionUID = 3251421842175077683L;
+    private static final long serialVersionUID = 4517892142552172615L;
 
     @JsonSerialize(using = SimsmeGuid.SimsmeGuidJsonSerializer.class)
     @JsonDeserialize(using = SimsmeGuid.SimsmeGuidJsonDeserializer.class)
@@ -17,8 +17,8 @@ public final class ExistingSimsmeAccountRefCreation extends SimsmeAccountRefModi
     public final SimsmeGuid existingSimsmeGuid;
 
     @JsonCreator
-    public ExistingSimsmeAccountRefCreation(final @JsonProperty("existingSimsmeGuid") SimsmeGuid existingSimmsmeGuid) {
-        super(Action.referenceExisting);
+    public SimsmeAccountRefDeletion(final @JsonProperty("existingSimsmeGuid") SimsmeGuid existingSimmsmeGuid) {
+        super(Action.deleteReference);
         notNull(existingSimmsmeGuid, "Argument 'existingSimsmeGuid' must not be null");
         this.existingSimsmeGuid = existingSimmsmeGuid;
     }
@@ -28,7 +28,7 @@ public final class ExistingSimsmeAccountRefCreation extends SimsmeAccountRefModi
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final ExistingSimsmeAccountRefCreation that = (ExistingSimsmeAccountRefCreation) o;
+        final SimsmeAccountRefDeletion that = (SimsmeAccountRefDeletion) o;
 
         return existingSimsmeGuid.equals(that.existingSimsmeGuid);
 
@@ -41,7 +41,7 @@ public final class ExistingSimsmeAccountRefCreation extends SimsmeAccountRefModi
 
     @Override
     public String toString() {
-        return "ExistingSimsmeAccountRefCreation[" +
+        return "SimsmeAccountRefDeletion[" +
                 "existingSimsmeGuid:" + existingSimsmeGuid +
                 ']';
     }

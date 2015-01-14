@@ -7,10 +7,6 @@ public interface AccountDao {
 
     Account accountByUuid(final UUID uuid);
 
-    Account createAccount(final String name,
-                          final long mmaId,
-                          final String[] allowedOutChannels);
-
     Account createAccount(final Account account);
 
     Account updateAccount(final Account account);

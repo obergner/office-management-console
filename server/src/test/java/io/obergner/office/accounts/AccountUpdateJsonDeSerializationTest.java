@@ -6,95 +6,106 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
-public class AccountCreationJsonDeSerializationTest {
+public class AccountUpdateJsonDeSerializationTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Test
-    public void should_correctly_deserialize_AccountCreation_without_optional_fields() throws IOException {
+    public void should_correctly_deserialize_AccountUpdate_without_optional_fields() throws IOException {
+        final UUID expectedUuid = UUID.randomUUID();
         final String expectedName = "expectedName";
         final int expectedMmaId = 1232234;
         final String[] expectedAllowedOutChannel = new String[]{"channel1", "channel2"};
-        final AccountCreation expectedAccountCreation = AccountCreation.newBuilder()
+        final AccountUpdate expectedAccountUpdate = AccountUpdate.newBuilder()
+                .withUuid(expectedUuid)
                 .withName(expectedName)
                 .withMmaId(expectedMmaId)
                 .withAllowedOutChannels(expectedAllowedOutChannel)
                 .build();
 
-        final String jsonRepresentation = "{\"name\":\"" + expectedName +
+        final String jsonRepresentation = "{\"uuid\":\"" + expectedUuid +
+                "\",\"name\":\"" + expectedName +
                 "\",\"mmaId\":" + expectedMmaId +
                 ",\"allowedOutChannels\":[\"" + expectedAllowedOutChannel[0] + "\",\"" + expectedAllowedOutChannel[1] + "\"]}";
 
-        final AccountCreation deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, AccountCreation.class);
+        final AccountUpdate deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, AccountUpdate.class);
 
-        assertEquals(expectedAccountCreation, deserialized);
+        assertEquals(expectedAccountUpdate, deserialized);
     }
 
     @Test
-    public void should_correctly_serialize_AccountCreation_without_optional_fields() throws IOException {
+    public void should_correctly_serialize_AccountUpdate_without_optional_fields() throws IOException {
+        final UUID expectedUuid = UUID.randomUUID();
         final String expectedName = "expectedName";
         final int expectedMmaId = 1232234;
         final String[] expectedAllowedOutChannel = new String[]{"channel1", "channel2"};
-        final AccountCreation expectedAccountCreation = AccountCreation.newBuilder()
+        final AccountUpdate expectedAccountUpdate = AccountUpdate.newBuilder()
+                .withUuid(expectedUuid)
                 .withName(expectedName)
                 .withMmaId(expectedMmaId)
                 .withAllowedOutChannels(expectedAllowedOutChannel)
                 .build();
-        final String expectedJsonRepresentation = "{\"name\":\"" + expectedName +
+        final String expectedJsonRepresentation = "{\"uuid\":\"" + expectedUuid +
+                "\",\"name\":\"" + expectedName +
                 "\",\"mmaId\":" + expectedMmaId +
                 ",\"allowedOutChannels\":[\"" + expectedAllowedOutChannel[0] + "\",\"" + expectedAllowedOutChannel[1] + "\"]"
                 + ",\"simsmeAccountRefModification\":{\"action\":\"none\"}}";
 
         final StringWriter actualJsonRepresentation = new StringWriter();
-        OBJECT_MAPPER.writeValue(actualJsonRepresentation, expectedAccountCreation);
+        OBJECT_MAPPER.writeValue(actualJsonRepresentation, expectedAccountUpdate);
 
         assertEquals(expectedJsonRepresentation, actualJsonRepresentation.toString());
     }
 
     @Test
-    public void should_correctly_deserialize_AccountCreation_with_CreateNewSimmseAccountRefCreation() throws IOException {
+    public void should_correctly_deserialize_AccountUpdate_with_CreateNewSimmseAccountRefCreation() throws IOException {
         final CreateNewSimsmeAccountRefCreation expectedCreateNewSimsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation("simsmeAccountName", "simsmeAccountImage");
-        final AccountCreation expectedAccountCreation = AccountCreation.newBuilder()
+        final AccountUpdate expectedAccountUpdate = AccountUpdate.newBuilder()
+                .withUuid(UUID.randomUUID())
                 .withName("expectedName")
                 .withMmaId(7823417654L)
                 .withAllowedOutChannels("channel1", "channel2")
                 .withReferenceToNewSimsmeAccount(expectedCreateNewSimsmeAccountRefCreation.name, expectedCreateNewSimsmeAccountRefCreation.imageBase64Jpeg)
                 .build();
 
-        final String jsonRepresentation = "{\"name\":\"" + expectedAccountCreation.name +
-                "\",\"mmaId\":" + expectedAccountCreation.mmaId +
-                ",\"allowedOutChannels\":[\"" + expectedAccountCreation.allowedOutChannels[0] + "\",\"" + expectedAccountCreation.allowedOutChannels[1] + "\"]" +
+        final String jsonRepresentation = "{\"uuid\":\"" + expectedAccountUpdate.uuid +
+                "\",\"name\":\"" + expectedAccountUpdate.name +
+                "\",\"mmaId\":" + expectedAccountUpdate.mmaId +
+                ",\"allowedOutChannels\":[\"" + expectedAccountUpdate.allowedOutChannels[0] + "\",\"" + expectedAccountUpdate.allowedOutChannels[1] + "\"]" +
                 ",\"simsmeAccountRefModification\":{\"action\":\"" + expectedCreateNewSimsmeAccountRefCreation.action.toString() +
                 "\",\"name\":\"" + expectedCreateNewSimsmeAccountRefCreation.name +
                 "\",\"imageBase64Jpeg\":\"" + expectedCreateNewSimsmeAccountRefCreation.imageBase64Jpeg + "\"}}";
 
-        final AccountCreation deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, AccountCreation.class);
+        final AccountUpdate deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, AccountUpdate.class);
 
-        assertEquals(expectedAccountCreation, deserialized);
+        assertEquals(expectedAccountUpdate, deserialized);
     }
 
     @Test
-    public void should_correctly_serialize_AccountCreation_with_CreateNewSimmseAccountRefCreation() throws IOException {
+    public void should_correctly_serialize_AccountUpdate_with_CreateNewSimmseAccountRefCreation() throws IOException {
         final CreateNewSimsmeAccountRefCreation createNewSimsmeAccountRefCreation = new CreateNewSimsmeAccountRefCreation("simsmeAccountName", "simsmeAccountImage");
-        final AccountCreation accountCreation = AccountCreation.newBuilder()
+        final AccountUpdate accountUpdate = AccountUpdate.newBuilder()
+                .withUuid(UUID.randomUUID())
                 .withName("expectedName")
                 .withMmaId(7823417654L)
                 .withAllowedOutChannels("channel1", "channel2")
                 .withReferenceToNewSimsmeAccount(createNewSimsmeAccountRefCreation.name, createNewSimsmeAccountRefCreation.imageBase64Jpeg)
                 .build();
 
-        final String expectedJsonRepresentation = "{\"name\":\"" + accountCreation.name +
-                "\",\"mmaId\":" + accountCreation.mmaId +
-                ",\"allowedOutChannels\":[\"" + accountCreation.allowedOutChannels[0] + "\",\"" + accountCreation.allowedOutChannels[1] + "\"]" +
+        final String expectedJsonRepresentation = "{\"uuid\":\"" + accountUpdate.uuid +
+                "\",\"name\":\"" + accountUpdate.name +
+                "\",\"mmaId\":" + accountUpdate.mmaId +
+                ",\"allowedOutChannels\":[\"" + accountUpdate.allowedOutChannels[0] + "\",\"" + accountUpdate.allowedOutChannels[1] + "\"]" +
                 ",\"simsmeAccountRefModification\":{\"action\":\"" + createNewSimsmeAccountRefCreation.action.toString() +
                 "\",\"name\":\"" + createNewSimsmeAccountRefCreation.name +
                 "\",\"imageBase64Jpeg\":\"" + createNewSimsmeAccountRefCreation.imageBase64Jpeg + "\"}}";
 
         final StringWriter actualJsonRepresentation = new StringWriter();
-        OBJECT_MAPPER.writeValue(actualJsonRepresentation, accountCreation);
+        OBJECT_MAPPER.writeValue(actualJsonRepresentation, accountUpdate);
 
         assertEquals(expectedJsonRepresentation, actualJsonRepresentation.toString());
     }

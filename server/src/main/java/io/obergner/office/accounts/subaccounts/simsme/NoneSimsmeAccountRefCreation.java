@@ -2,7 +2,7 @@ package io.obergner.office.accounts.subaccounts.simsme;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public final class NoneSimsmeAccountRefCreation extends SimsmeAccountRefCreation {
+public final class NoneSimsmeAccountRefCreation extends SimsmeAccountRefModification {
 
     private static final NoneSimsmeAccountRefCreation INSTANCE = new NoneSimsmeAccountRefCreation();
 

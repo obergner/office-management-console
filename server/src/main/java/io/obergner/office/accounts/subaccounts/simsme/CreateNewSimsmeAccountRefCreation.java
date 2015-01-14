@@ -3,7 +3,7 @@ package io.obergner.office.accounts.subaccounts.simsme;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public final class CreateNewSimsmeAccountRefCreation extends SimsmeAccountRefCreation {
+public final class CreateNewSimsmeAccountRefCreation extends SimsmeAccountRefModification {
 
     private static final long serialVersionUID = 5564700480889068139L;
 

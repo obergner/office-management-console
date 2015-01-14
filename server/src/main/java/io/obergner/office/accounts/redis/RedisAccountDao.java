@@ -78,13 +78,6 @@ public final class RedisAccountDao implements AccountDao {
     }
 
     @Override
-    public Account createAccount(final String name,
-                                 final long mmaId,
-                                 final String[] allowedOutChannels) {
-        return createAccount(Account.newAccount(name, mmaId, allowedOutChannels));
-    }
-
-    @Override
     public Account createAccount(final Account newAccount) {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         checkNotNull(newAccount);
@@ -107,6 +100,25 @@ public final class RedisAccountDao implements AccountDao {
         }
     }
 
+    /*
+     * Exposed for testing purposes.
+     */
+    Account createAccount(final String name,
+                          final long mmaId,
+                          final String[] allowedOutChannels) {
+        return createAccount(Account.newAccount(name, mmaId, allowedOutChannels));
+    }
+
+    /*
+     * Exposed for testing purposes.
+     */
+    Account createAccount(final String name,
+                          final long mmaId,
+                          final String[] allowedOutChannels,
+                          final SimsmeGuid simsmeGuid) {
+        return createAccount(Account.newAccountWithReferenceToExistingSimsmeAccount(name, mmaId, allowedOutChannels, simsmeGuid));
+    }
+
     @Override
     public Account updateAccount(final Account account) {
         checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
@@ -114,9 +126,11 @@ public final class RedisAccountDao implements AccountDao {
         try {
             this.log.debug("Updating [{}] ...", account);
             redisClient = this.redisClientPool.getResource();
+            final String optionalSimsmeAccountGuid = account.simsmeAccountRef.simsmeGuid().map(SimsmeGuid::toString).orElse(AccountSchema.NULL_VALUE);
+            final String allowedOutChannelsConcat = StringUtils.arrayToCommaDelimitedString(account.allowedOutChannels);
             redisClient.evalsha(this.scriptHandles.updateAccountScriptSha,
                     Collections.singletonList(AccountSchema.Keys.ACCOUNT_MMA_INDEX),
-                    Arrays.asList(account.uuid.toString(), account.name, String.valueOf(account.mmaId), StringUtils.arrayToCommaDelimitedString(account.allowedOutChannels)));
+                    Arrays.asList(account.uuid.toString(), account.name, String.valueOf(account.mmaId), allowedOutChannelsConcat, optionalSimsmeAccountGuid));
             this.log.debug("Successfully updated {}", account);
 
             return account;

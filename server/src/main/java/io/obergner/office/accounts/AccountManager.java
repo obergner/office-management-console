@@ -7,15 +7,9 @@ public interface AccountManager {
 
     Account accountByUuid(final UUID uuid);
 
-    Account createAccount(final String name,
-                          final long mmaId,
-                          final String[] allowedOutChannels);
-
-    Account createAccount(final Account account);
-
     Account createAccount(final AccountCreation accountCreation);
 
-    Account updateAccount(final Account account);
+    Account updateAccount(final AccountUpdate account);
 
     void deleteAccount(final UUID accountUuid);
 

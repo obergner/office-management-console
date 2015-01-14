@@ -131,7 +131,7 @@ public class CoordinatingAccountManagerTest {
         final long mmaId = 17866534288L;
         final String[] allowedOutChannels = new String[]{"Allowed_Out_Channel_1", "Allowed_Out_Channel_2"};
         final String simsmeAccountName = "newSimsmeAccount";
-        final String simsmeAccountImage = "new simsme account imgage";
+        final String simsmeAccountImage = "new simsme account image";
         final AccountCreation accountCreationWithSimsmeAccountRef = AccountCreation.newBuilder()
                 .withName(accountName)
                 .withMmaId(mmaId)

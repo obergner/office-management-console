@@ -14,8 +14,8 @@ import static org.springframework.util.Assert.notNull;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "action")
-@JsonTypeIdResolver(SimsmeAccountRefCreation.SimsmeAccountRefCreationTypeIdResolver.class)
-public abstract class SimsmeAccountRefCreation implements Serializable {
+@JsonTypeIdResolver(SimsmeAccountRefModification.SimsmeAccountRefCreationTypeIdResolver.class)
+public abstract class SimsmeAccountRefModification implements Serializable {
 
     public enum Action {
 
@@ -23,13 +23,15 @@ public abstract class SimsmeAccountRefCreation implements Serializable {
 
         referenceExisting,
 
-        createNew
+        createNew,
+
+        deleteReference
     }
 
     @JsonIgnore
     public final Action action;
 
-    protected SimsmeAccountRefCreation(final Action action) {
+    protected SimsmeAccountRefModification(final Action action) {
         notNull(action, "Argument 'action' must not be null");
         this.action = action;
     }
@@ -50,10 +52,10 @@ public abstract class SimsmeAccountRefCreation implements Serializable {
 
         @Override
         public String idFromValueAndType(final Object value, final Class<?> suggestedType) {
-            if (!(value instanceof SimsmeAccountRefCreation)) {
-                throw new IllegalArgumentException("Supplied value [" + value + "] needs to be a [" + SimsmeAccountRefCreation.class.getName() + "] but is in fact a [" + value.getClass().getName() + "]");
+            if (!(value instanceof SimsmeAccountRefModification)) {
+                throw new IllegalArgumentException("Supplied value [" + value + "] needs to be a [" + SimsmeAccountRefModification.class.getName() + "] but is in fact a [" + value.getClass().getName() + "]");
             }
-            return SimsmeAccountRefCreation.class.cast(value).action.toString();
+            return SimsmeAccountRefModification.class.cast(value).action.toString();
         }
 
         @Override
@@ -71,6 +73,8 @@ public abstract class SimsmeAccountRefCreation implements Serializable {
                     return TypeFactory.defaultInstance().constructSpecializedType(this.baseType, ExistingSimsmeAccountRefCreation.class);
                 case createNew:
                     return TypeFactory.defaultInstance().constructSpecializedType(this.baseType, CreateNewSimsmeAccountRefCreation.class);
+                case deleteReference:
+                    return TypeFactory.defaultInstance().constructSpecializedType(this.baseType, SimsmeAccountRefDeletion.class);
                 default:
                     throw new IllegalArgumentException("Unsupported action: " + action);
             }

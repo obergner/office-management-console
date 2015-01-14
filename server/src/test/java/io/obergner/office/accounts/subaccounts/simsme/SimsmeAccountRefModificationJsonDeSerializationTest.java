@@ -10,16 +10,16 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SimsmeAccountRefCreationJsonDeSerializationTest {
+public class SimsmeAccountRefModificationJsonDeSerializationTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Test
     public void should_correctly_deserialize_ExistingSimsmeAccountRefCreation_from_json_representation() throws IOException {
         final SimsmeGuid existingSimsmeGuid = new SimsmeGuid(0, UUID.randomUUID());
-        final String jsonRepresentation = "{\"action\":\"" + SimsmeAccountRefCreation.Action.referenceExisting + "\",\"existingSimsmeGuid\":\"" + existingSimsmeGuid.toString() + "\"}";
+        final String jsonRepresentation = "{\"action\":\"" + SimsmeAccountRefModification.Action.referenceExisting + "\",\"existingSimsmeGuid\":\"" + existingSimsmeGuid.toString() + "\"}";
 
-        final SimsmeAccountRefCreation deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, SimsmeAccountRefCreation.class);
+        final SimsmeAccountRefModification deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, SimsmeAccountRefModification.class);
 
         assertTrue(deserialized instanceof ExistingSimsmeAccountRefCreation);
         assertEquals(existingSimsmeGuid, ExistingSimsmeAccountRefCreation.class.cast(deserialized).existingSimsmeGuid);
@@ -39,9 +39,9 @@ public class SimsmeAccountRefCreationJsonDeSerializationTest {
 
     @Test
     public void should_correctly_deserialize_CreateNewSimsmeAccountRefCreation_from_json_representation() throws IOException {
-        final String jsonRepresentation = "{\"action\":\"" + SimsmeAccountRefCreation.Action.createNew + "\"}";
+        final String jsonRepresentation = "{\"action\":\"" + SimsmeAccountRefModification.Action.createNew + "\"}";
 
-        final SimsmeAccountRefCreation deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, SimsmeAccountRefCreation.class);
+        final SimsmeAccountRefModification deserialized = OBJECT_MAPPER.readValue(jsonRepresentation, SimsmeAccountRefModification.class);
 
         assertTrue(deserialized instanceof CreateNewSimsmeAccountRefCreation);
     }
