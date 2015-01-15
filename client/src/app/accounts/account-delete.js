@@ -26,11 +26,11 @@
         };
     }
 
-    angular.module('accounts.delete', [
+    angular
+    .module('accounts.delete', [
         'services.localizedMessages',
         'services.apiErrorHandler'
     ])
-
     .controller('DeleteAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToDelete',
         DeleteAccountController]);
 })();

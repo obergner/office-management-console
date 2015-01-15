@@ -8,7 +8,7 @@
         });
     }
 
-    angular.module('accounts.list', [])
-
+    angular
+    .module('accounts.list', [])
     .controller('AccountsListController', ['$scope', 'accounts', AccountsListController]);
 })();

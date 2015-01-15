@@ -1,17 +1,15 @@
 (function() {
     function AccountCreationFactory($resource) {
-
-        var AccountCreation = $resource('/accountcreations/:uuid', { uuid: '@uuid' } , {
+        var AccountCreation = $resource('/accountcreations', {} , {
             save: {
-                method: 'POST',
-                url: '/accountcreations'
+                method: 'POST'
             }
         });
 
         return AccountCreation;
     }
 
-    angular.module('accounts.accountCreationResource', ['ngResource'])
-
+    angular
+    .module('accounts.accountCreationResource', ['ngResource'])
     .factory('AccountCreation', ['$resource', AccountCreationFactory]);
 })();

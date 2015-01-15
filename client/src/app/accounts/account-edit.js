@@ -26,11 +26,11 @@
         };
     }
 
-    angular.module('accounts.edit', [
+    angular
+    .module('accounts.edit', [
         'services.localizedMessages',
         'services.apiErrorHandler'
     ])
-
     .controller('EditAccountController', ['$scope', '$modalInstance', '$state', 'localizedMessages', 'apiErrorHandler', 'growl', 'AccountSettings', 'accountToUpdate', 
         EditAccountController]);
 })();

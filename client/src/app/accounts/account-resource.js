@@ -23,7 +23,7 @@
         return Account;
     }
 
-    angular.module('accounts.accountResource', ['ngResource'])
-
+    angular
+    .module('accounts.accountResource', ['ngResource'])
     .factory('Account', ['$resource', AccountFactory]);
 })();

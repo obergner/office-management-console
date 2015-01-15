@@ -1,5 +1,6 @@
 (function() {
-    angular.module('accounts', [
+    angular
+    .module('accounts', [
         'accounts.list',
         'accounts.new',
         'accounts.edit',
@@ -11,11 +12,9 @@
         'services.apiErrorHandler',
         'ui.router'
     ])
-
     .constant('AccountSettings', {
         outChannels: ['SIMSme', 'USSD', 'FlashSMS']
     })
-
     .config(['$stateProvider', function ($stateProvider) {
         $stateProvider
         .state('accounts', {

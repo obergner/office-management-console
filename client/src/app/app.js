@@ -23,7 +23,8 @@
         };
     }
 
-    angular.module('app', [
+    angular
+    .module('app', [
         'ngSanitize',
         'ngResource',
         'ngAnimate',
@@ -35,7 +36,6 @@
         'services.httpRequestTracker',
         'templates.app',
     'templates.common'])
-
     .constant('I18N.MESSAGES', {
         'error.fatal':'Caught exception {{exception}} caused by {{cause}}',
         'errors.route.changeError':'Route change error: {{rejection}}',
@@ -49,7 +49,6 @@
         'crud.configuration.remove.success':"A configuration with id '{{id}}' was removed successfully.",
         'crud.configuration.save.error':"Something went wrong when saving a configuration..."
     })
-
     .config(['$urlRouterProvider', 'uiSelectConfig', 'growlProvider', function ($urlRouterProvider, uiSelectConfig, growlProvider) {
         $urlRouterProvider.otherwise('/accounts');
         uiSelectConfig.theme = 'bootstrap';
@@ -57,8 +56,6 @@
         growlProvider.globalDisableCountDown(true);
         growlProvider.globalDisableIcons(true);
     }])
-
     .controller('AppController', ['$scope', 'growl', 'localizedMessages', AppController])
-
     .controller('HeaderController', ['$rootScope', '$scope', 'httpRequestTracker', HeaderController]);
 })();
