@@ -1,13 +1,9 @@
 (function() {
     function EditAccountController($scope, $modalInstance, $state, localizedMessages, apiErrorHandler, growl, AccountSettings, accountToUpdate) {
-
         $scope.account = accountToUpdate;
-        $scope.apiErrors = apiErrorHandler;
-        $scope.availableOutChannels = AccountSettings.outChannels;
 
-        $scope.ok = function () {
-            $scope.apiErrors.dismissAlerts();
-            $scope.account.$update(
+        $scope.onSave = function(account, apiErrors) {
+            account.update(
                 function(updatedAccount) {
                     $modalInstance.close(updatedAccount);
                     $state.go('accounts', {}, { reload: true }).then(function() {
@@ -15,12 +11,12 @@
                     });
                 },
                 function(httpResponse) {
-                    $scope.apiErrors.handleApiErrorResponse(httpResponse);
+                    var alerts = apiErrorHandler.mapToAlert(httpResponse);
+                    apiErrors.push(alerts);
                 });
         };
 
-        $scope.cancel = function () {
-            $scope.apiErrors.dismissAlerts();
+        $scope.onCancel = function(account, apiErrors) {
             $modalInstance.dismiss('cancel');
             $state.go('accounts');
         };

@@ -1,21 +1,30 @@
 (function() {
-    function AccountModificationViewModelFactory(AccountCreation) {
+    function AccountModificationViewModelFactory(AccountCreation, AccountUpdate) {
         /*
         * Encapsulates the Office account proper to be created. 
         */
 
-        var AccountModificationViewModel = function() {
+        var AccountModificationViewModel = function(accountToUpdate) {
             this.AvailableOutChannels = ['FlashSMS', 'USSD', 'SIMSme'];
 
-            this.name = '';
-            this.mmaId = null;
-            this.allowedOutChannels = [];
+            if (accountToUpdate !== undefined) {
+                this.accountToUpdate = accountToUpdate;
+                this.uuid = accountToUpdate.uuid;
+            }
 
-            this.subaccounts = new AccountModificationViewModel.Subaccounts(this);
+            this.name = (accountToUpdate !== undefined ? accountToUpdate.name : '');
+            this.mmaId = (accountToUpdate !== undefined ? accountToUpdate.mmaId : null);
+            this.allowedOutChannels = (accountToUpdate !== undefined ? accountToUpdate.allowedOutChannels : []);
+
+            this.subaccounts = new AccountModificationViewModel.Subaccounts(this, accountToUpdate);
         };
 
         AccountModificationViewModel.prototype = {
             constructor: AccountModificationViewModel,
+
+            isUpdate: function() {
+                return (this.accountToUpdate !== undefined);
+            },
 
             save: function(onSuccess, onError) {
                 var accountCreationResource = new AccountCreation();
@@ -28,6 +37,19 @@
 
                 accountCreationResource.$save(onSuccess, onError);
             },
+
+            update: function(onSuccess, onError) {
+                var accountUpdateResource = new AccountUpdate();
+                accountUpdateResource.uuid = this.uuid;
+                accountUpdateResource.name = this.name;
+                accountUpdateResource.mmaId = this.mmaId;
+                accountUpdateResource.allowedOutChannels = this.allowedOutChannels;
+                if (this.subaccounts.createsAccountRefOfType('SIMSme')) {
+                    accountUpdateResource.simsmeAccountRefModification = this.subaccounts.simsme;
+                }
+
+                accountUpdateResource.$save(onSuccess, onError);
+            }
         };
 
         /*
@@ -35,7 +57,7 @@
         * may potentially be created.
         */
 
-        AccountModificationViewModel.Subaccounts = function(parent) {
+        AccountModificationViewModel.Subaccounts = function(parent, accountToUpdate) {
             this.parent = parent;
 
             var _creations = {
@@ -50,7 +72,7 @@
                     },
                     referenceExisting: {
                         action: 'referenceExisting',
-                        existingSimsmeGuid: null
+                        existingSimsmeGuid: ((accountToUpdate !== undefined) && (accountToUpdate.simsmeAccountRef !== undefined) ? accountToUpdate.simsmeAccountRef.simsmeGuid : null)
                     }
                 }
             };
@@ -59,7 +81,7 @@
                 this[accountType.toLowerCase()] = _creations[accountType.toLowerCase()][action];
             };
 
-            this.simsme = _creations.simsme.none;
+            this.simsme = ((accountToUpdate !== undefined) && (accountToUpdate.simsmeAccountRef !== undefined) && (accountToUpdate.simsmeAccountRef.simsmeGuid !== undefined) ? _creations.simsme.referenceExisting : _creations.simsme.none);
         };
 
         AccountModificationViewModel.Subaccounts.prototype = {
@@ -82,6 +104,6 @@
     }
 
     angular
-    .module('accounts.accountModificationViewModel', ['accounts.accountCreationResource'])
-    .factory('AccountModificationViewModel', ['AccountCreation', AccountModificationViewModelFactory]);
+    .module('accounts.accountModificationViewModel', ['accounts.accountCreationResource', 'accounts.accountUpdateResource'])
+    .factory('AccountModificationViewModel', ['AccountCreation', 'AccountUpdate', AccountModificationViewModelFactory]);
 })();
