@@ -1,21 +1,21 @@
 (function() {
-    function AccountCreationViewModelFactory(AccountCreation) {
+    function AccountModificationViewModelFactory(AccountCreation) {
         /*
         * Encapsulates the Office account proper to be created. 
         */
 
-        var AccountCreationViewModel = function() {
+        var AccountModificationViewModel = function() {
             this.AvailableOutChannels = ['FlashSMS', 'USSD', 'SIMSme'];
 
             this.name = '';
             this.mmaId = null;
             this.allowedOutChannels = [];
 
-            this.subaccounts = new AccountCreationViewModel.Subaccounts(this);
+            this.subaccounts = new AccountModificationViewModel.Subaccounts(this);
         };
 
-        AccountCreationViewModel.prototype = {
-            constructor: AccountCreationViewModel,
+        AccountModificationViewModel.prototype = {
+            constructor: AccountModificationViewModel,
 
             save: function(onSuccess, onError) {
                 var accountCreationResource = new AccountCreation();
@@ -35,7 +35,7 @@
         * may potentially be created.
         */
 
-        AccountCreationViewModel.Subaccounts = function(parent) {
+        AccountModificationViewModel.Subaccounts = function(parent) {
             this.parent = parent;
 
             var _creations = {
@@ -62,8 +62,8 @@
             this.simsme = _creations.simsme.none;
         };
 
-        AccountCreationViewModel.Subaccounts.prototype = {
-            constructor: AccountCreationViewModel.Subaccounts,
+        AccountModificationViewModel.Subaccounts.prototype = {
+            constructor: AccountModificationViewModel.Subaccounts,
 
             requiresAccountRefOfType: function(accountType) {
                 return this.parent.allowedOutChannels.map(function(item) { return item.toLowerCase(); }).indexOf(accountType.toLowerCase()) > -1;
@@ -78,10 +78,10 @@
             }
         };
 
-        return AccountCreationViewModel;
+        return AccountModificationViewModel;
     }
 
-    angular.module('viewmodels.accountCreation', ['resources.accountCreation'])
+    angular.module('accounts.accountModificationViewModel', ['resources.accountCreation'])
 
-    .factory('AccountCreationViewModel', ['AccountCreation', AccountCreationViewModelFactory]);
+    .factory('AccountModificationViewModel', ['AccountCreation', AccountModificationViewModelFactory]);
 })();

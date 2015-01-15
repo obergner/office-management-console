@@ -19,7 +19,7 @@
     .factory('exceptionHandlerFactory', ['$injector', ExceptionHandlerFactory])
 
     .config(['$provide', function($provide) {
-        $provide.decorator('$exceptionHandler', ['$delegate', 'exceptionHandlerFactory', function ($delegate, exceptionHandlerFactory) {
+        $provide.decorator('$exceptionHandler', ['$delegate', 'exceptionHandlerFactory', function($delegate, exceptionHandlerFactory) {
             return exceptionHandlerFactory($delegate);
         }]);
     }]);

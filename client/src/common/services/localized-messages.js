@@ -1,5 +1,5 @@
 (function() {
-    function LocalizedMessages($interpolate, i18nmessages) {
+    function LocalizedMessagesFactory($interpolate, i18nmessages) {
         var handleNotFound = function (msg, msgKey) {
             return msg || '?' + msgKey + '?';
         };
@@ -18,5 +18,5 @@
 
     angular.module('services.localizedMessages', [])
 
-    .factory('localizedMessages', ['$interpolate', 'I18N.MESSAGES', LocalizedMessages]);
+    .factory('localizedMessages', ['$interpolate', 'I18N.MESSAGES', LocalizedMessagesFactory]);
 })();

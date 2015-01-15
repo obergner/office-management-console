@@ -60,7 +60,7 @@
         return {
             restrict: 'AE',
             scope: {
-                account: '=ngModel',
+                account: '=accountModificationViewModel',
                 title: '@',
                 onSave: '&',
                 onCancel: '&'

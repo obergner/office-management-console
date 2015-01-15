@@ -1,5 +1,5 @@
 (function() {
-    function HttpRequestTracker($http) {
+    function HttpRequestTrackerFactory($http) {
         var httpRequestTracker = {};
         httpRequestTracker.hasPendingRequests = function() {
             return $http.pendingRequests.length > 0;
@@ -10,5 +10,5 @@
 
     angular.module('services.httpRequestTracker', [])
 
-    .factory('httpRequestTracker', ['$http', HttpRequestTracker]);
+    .factory('httpRequestTracker', ['$http', HttpRequestTrackerFactory]);
 })();

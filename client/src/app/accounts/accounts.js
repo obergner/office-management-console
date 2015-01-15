@@ -5,10 +5,10 @@
         'accounts.edit',
         'accounts.delete',
         'accounts.accountModificationForm',
+        'accounts.accountModificationViewModel',
         'services.localizedMessages',
         'services.apiErrorHandler',
         'resources.account',
-        'viewmodels.accountCreation',
         'ui.router'
     ])
 
@@ -44,8 +44,8 @@
                     size: 'lg',
                     backdrop: false,
                     resolve: {
-                        newAccount: ['AccountCreationViewModel', function (AccountCreationViewModel) {
-                            return new AccountCreationViewModel();
+                        newAccount: ['AccountModificationViewModel', function (AccountModificationViewModel) {
+                            return new AccountModificationViewModel();
                         }]
                     },
                     controller: 'NewAccountController'
