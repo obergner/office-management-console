@@ -6,9 +6,9 @@
         'accounts.delete',
         'accounts.accountModificationForm',
         'accounts.accountModificationViewModel',
+        'accounts.accountResource',
         'services.localizedMessages',
         'services.apiErrorHandler',
-        'resources.account',
         'ui.router'
     ])
 

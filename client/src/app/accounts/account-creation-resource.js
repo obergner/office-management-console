@@ -11,7 +11,7 @@
         return AccountCreation;
     }
 
-    angular.module('resources.accountCreation', ['ngResource'])
+    angular.module('accounts.accountCreationResource', ['ngResource'])
 
     .factory('AccountCreation', ['$resource', AccountCreationFactory]);
 })();

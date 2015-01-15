@@ -81,7 +81,7 @@
         return AccountModificationViewModel;
     }
 
-    angular.module('accounts.accountModificationViewModel', ['resources.accountCreation'])
+    angular.module('accounts.accountModificationViewModel', ['accounts.accountCreationResource'])
 
     .factory('AccountModificationViewModel', ['AccountCreation', AccountModificationViewModelFactory]);
 })();

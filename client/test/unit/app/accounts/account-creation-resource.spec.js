@@ -5,7 +5,7 @@ describe('resource: AccountCreation', function () {
 
     beforeEach(module('app'));
 
-    beforeEach(module('resources.accountCreation'));
+    beforeEach(module('accounts.accountCreationResource'));
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');

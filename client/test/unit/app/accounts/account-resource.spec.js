@@ -27,7 +27,7 @@ describe('resource: Account', function () {
 
     beforeEach(module('app'));
 
-    beforeEach(module('resources.account'));
+    beforeEach(module('accounts.accountResource'));
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
