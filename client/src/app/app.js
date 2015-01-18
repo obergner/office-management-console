@@ -35,11 +35,12 @@
         'accounts',
         'services.httpRequestTracker',
         'templates.app',
-    'templates.common'])
+        'templates.common'
+    ])
     .constant('I18N.MESSAGES', {
         'error.fatal':'Caught exception {{exception}} caused by {{cause}}',
         'errors.route.changeError':'Route change error: {{rejection}}',
-        'crud.account.create.success':"Account '{{account.uuid}} | {{account.name}}' successfully created.",
+        'crud.account.create.success':"Account '{{account.name}}' successfully created.",
         'crud.account.create.error':"Failed to create account '{{account.name}}: ",
         'crud.account.update.success':"Account '{{account.uuid}} | {{account.name}}' successfully updated.",
         'crud.account.update.error':"Failed to update account '{{account.name}}: ",

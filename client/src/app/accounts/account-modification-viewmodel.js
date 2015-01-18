@@ -1,9 +1,9 @@
 (function() {
     function AccountModificationViewModelFactory(AccountCreation, AccountUpdate) {
-        /*
-        * Encapsulates the Office account proper to be created. 
-        */
 
+        /*
+         * Encapsulates the Office account proper to be created.
+         */
         var AccountModificationViewModel = function(accountToUpdate) {
             this.AvailableOutChannels = ['FlashSMS', 'USSD', 'SIMSme'];
 
@@ -53,10 +53,9 @@
         };
 
         /*
-        * Collection of references to nested accounts that
-        * may potentially be created.
-        */
-
+         * Collection of references to nested accounts that
+         * may potentially be created.
+         */
         AccountModificationViewModel.Subaccounts = function(parent, accountToUpdate) {
             this.parent = parent;
 
@@ -97,6 +96,10 @@
 
             createsAccountRefOfTypeWithAction: function(accountType, action) {
                 return this[accountType.toLowerCase()] && this[accountType.toLowerCase()].action === action;
+            },
+
+            supportsRemovingAccountRefOfType: function(accountType) {
+                return this.parent.isUpdate();
             }
         };
 

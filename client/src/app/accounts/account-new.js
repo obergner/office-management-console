@@ -5,15 +5,16 @@
         $scope.onSave = function(account, apiErrors) {
             account.save(
                 function(createdAccount) {
-                    $modalInstance.close(createdAccount);
-                    $state.go('accounts', {}, { reload: true }).then(function() {
-                        growl.success(localizedMessages.get('crud.account.create.success', {account: createdAccount}), {title: 'Account created'});
-                    });
-                },
-                function(httpResponse) {
-                    var alerts = apiErrorHandler.mapToAlert(httpResponse);
-                    apiErrors.push(alerts);
+                console.log('createdAccount: ' + angular.toJson(createdAccount));
+                $modalInstance.close(createdAccount);
+                $state.go('accounts', {}, { reload: true }).then(function() {
+                    growl.success(localizedMessages.get('crud.account.create.success', {account: createdAccount}), {title: 'Account created'});
                 });
+            },
+            function(httpResponse) {
+                var alerts = apiErrorHandler.mapToAlert(httpResponse);
+                apiErrors.push(alerts);
+            });
         };
 
         $scope.onCancel = function(account, apiErrors) {

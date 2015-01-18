@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.2.0.RELEASE'
+        springBootVersion = '1.2.1.RELEASE'
         osPackagePluginVersion = '2.0.3'
         transmodeDockerPluginVersion = '1.2'
     }
@@ -25,6 +25,8 @@ ext {
     jedisVersion = '2.6.1'
     guavaVersion = 'r03'
     commonsIoVersion = '2.4'
+    jacksonVersion = '2.5.0'
+    classmateVersion = '1.1.0'
 }
 
 def unpackedClientResourcesDir = file("${buildDir}/copied-client-resources/main")
@@ -54,6 +56,10 @@ dependencies {
     compile "redis.clients:jedis:${jedisVersion}"
     compile "com.google.guava:guava-io:${guavaVersion}"
     compile "commons-io:commons-io:${commonsIoVersion}"
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.fasterxml:classmate:${classmateVersion}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test"
 

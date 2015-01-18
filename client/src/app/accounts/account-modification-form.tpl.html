@@ -26,12 +26,12 @@
                 ng-show="alert.fieldValidationErrors"
                 ng-repeat="fieldValidationError in alert.fieldValidationErrors">
                 <li class="list-group-item">
-                <h4 class="list-group-item-heading">Field</h4>
-                <p class="list-group-item-text">{{fieldValidationError.field}}</p>
+                    <h4 class="list-group-item-heading">Field</h4>
+                    <p class="list-group-item-text">{{fieldValidationError.field}}</p>
                 </li>
                 <li class="list-group-item">
-                <h4 class="list-group-item-heading">Message</h4>
-                <p class="list-group-item-text">{{fieldValidationError.message}}</p>
+                    <h4 class="list-group-item-heading">Message</h4>
+                    <p class="list-group-item-text">{{fieldValidationError.message}}</p>
                 </li>
             </ul>
             </alert>
@@ -85,15 +85,15 @@
                         popover="Ordered list of out channels to try for this account">Out channels</label>
                     <div id="inputAllowedOutChannels" class="col-md-7">
                         <ui-select multiple
-                        ng-model="account.allowedOutChannels"
-                        theme="bootstrap"
-                        close-on-select="false"
-                        on-select="onOutChannelSelected($item, $model)"
-                        on-remove="onOutChannelDeselected($item, $model)">
-                        <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
-                        <ui-select-choices repeat="outChannel in account.AvailableOutChannels | filter: $select.search">
-                        <span ng-bind-html="outChannel | highlight: $select.search"></span>
-                        </ui-select-choices>
+                            ng-model="account.allowedOutChannels"
+                            theme="bootstrap"
+                            close-on-select="false"
+                            on-select="onOutChannelSelected($item, $model)"
+                            on-remove="onOutChannelDeselected($item, $model)">
+                            <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="outChannel in account.AvailableOutChannels | filter: $select.search">
+                                <span ng-bind-html="outChannel | highlight: $select.search"></span>
+                            </ui-select-choices>
                         </ui-select>
                     </div>
                     <span class="col-md-1">

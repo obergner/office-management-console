@@ -22,18 +22,18 @@
             switch(action) {
                 case 'createNew':
                     scope.accountForm.$removeControl(scope.referenceExistingSimsmeSubaccountForm);
-                    if (!(scope.createNewSimsmeSubaccountForm.$name in scope.accountForm)) {
-                        scope.accountForm.$addControl(scope.createNewSimsmeSubaccountForm);
-                    }
-                    scope.account.subaccounts.switchAccountRef('SIMSme', 'createNew');
-                    break;
+                if (!(scope.createNewSimsmeSubaccountForm.$name in scope.accountForm)) {
+                    scope.accountForm.$addControl(scope.createNewSimsmeSubaccountForm);
+                }
+                scope.account.subaccounts.switchAccountRef('SIMSme', 'createNew');
+                break;
                 case 'referenceExisting':
                     scope.accountForm.$removeControl(scope.createNewSimsmeSubaccountForm);
-                    if (!(scope.referenceExistingSimsmeSubaccountForm.$name in scope.accountForm)) {
-                        scope.accountForm.$addControl(scope.referenceExistingSimsmeSubaccountForm);
-                    }
-                    scope.account.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
-                    break;
+                if (!(scope.referenceExistingSimsmeSubaccountForm.$name in scope.accountForm)) {
+                    scope.accountForm.$addControl(scope.referenceExistingSimsmeSubaccountForm);
+                }
+                scope.account.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
+                break;
                 default:
                     throw new Error('Unknown action: ' + action);
             }

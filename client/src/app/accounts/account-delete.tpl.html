@@ -52,13 +52,13 @@
                         class="col-md-2 control-label">Out channels</label>
                     <div id="inputAllowedOutChannels" class="col-md-8">
                         <ui-select multiple
-                        ng-model="account.allowedOutChannels"
-                        theme="bootstrap"
-                        close-on-select="false">
-                        <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
-                        <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
-                        <span ng-bind-html="outChannel | highlight: $select.search"></span>
-                        </ui-select-choices>
+                            ng-model="account.allowedOutChannels"
+                            theme="bootstrap"
+                            close-on-select="false">
+                            <ui-select-match placeholder="Select out channels ...">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="outChannel in availableOutChannels | filter: $select.search">
+                                <span ng-bind-html="outChannel | highlight: $select.search"></span>
+                            </ui-select-choices>
                         </ui-select>
                     </div>
                 </div>

@@ -60,6 +60,9 @@ describe('accounts: AccountModificationViewModel', function () {
             expect(accountModificationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'createNew')).toBeTruthy();
             accountModificationViewModel.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
             expect(accountModificationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')).toBeTruthy();
+
+            expect(accountModificationViewModel.subaccounts.supportsRemovingAccountRefOfType).toBeDefined();
+            expect(accountModificationViewModel.subaccounts.supportsRemovingAccountRefOfType('SIMSme')).toBeFalsy();
         });
 
         it('should remember CreateNewSimsmeAccountRefModification', function() {
@@ -174,6 +177,9 @@ describe('accounts: AccountModificationViewModel', function () {
             expect(accountModificationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'createNew')).toBeTruthy();
             accountModificationViewModel.subaccounts.switchAccountRef('SIMSme', 'referenceExisting');
             expect(accountModificationViewModel.subaccounts.createsAccountRefOfTypeWithAction('SIMSme', 'referenceExisting')).toBeTruthy();
+
+            expect(accountModificationViewModel.subaccounts.supportsRemovingAccountRefOfType).toBeDefined();
+            expect(accountModificationViewModel.subaccounts.supportsRemovingAccountRefOfType('SIMSme')).toBeTruthy();
         });
 
         it('should correctly initialize all fields', function() {

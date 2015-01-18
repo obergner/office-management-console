@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 public final class RedisAccountDao implements AccountDao {
 
@@ -43,7 +43,7 @@ public final class RedisAccountDao implements AccountDao {
 
     @Override
     public Account accountByUuid(final UUID uuid) {
-        checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
+        isTrue(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
             this.log.debug("Looking up account by UUID [{}] ...", uuid);
@@ -79,8 +79,8 @@ public final class RedisAccountDao implements AccountDao {
 
     @Override
     public Account createAccount(final Account newAccount) {
-        checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
-        checkNotNull(newAccount);
+        isTrue(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
+        notNull(newAccount);
         Jedis redisClient = null;
         try {
             this.log.debug("Creating [{}] ...", newAccount);
@@ -121,7 +121,7 @@ public final class RedisAccountDao implements AccountDao {
 
     @Override
     public Account updateAccount(final Account account) {
-        checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
+        isTrue(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
             this.log.debug("Updating [{}] ...", account);
@@ -143,7 +143,7 @@ public final class RedisAccountDao implements AccountDao {
 
     @Override
     public void deleteAccount(final UUID accountUuid) {
-        checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
+        isTrue(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
             this.log.debug("Deleting account [uuid:{}] ...", accountUuid);
@@ -161,7 +161,7 @@ public final class RedisAccountDao implements AccountDao {
 
     @Override
     public Account accountByMmaId(final long mmaId) {
-        checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
+        isTrue(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
             this.log.debug("Looking up account by MMA-ID [{}] ...", mmaId);
@@ -189,7 +189,7 @@ public final class RedisAccountDao implements AccountDao {
 
     @Override
     public List<Account> allAccounts() {
-        checkState(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
+        isTrue(this.scriptHandles != null, "RedisAccountManager has not yet been initialized - did you forget to call #initialize()?");
         Jedis redisClient = null;
         try {
             this.log.debug("Looking up all accounts ...");

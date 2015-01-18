@@ -3,6 +3,7 @@ package io.obergner.office.accounts.subaccounts.simsme;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
@@ -65,6 +66,11 @@ public abstract class SimsmeAccountRefModification implements Serializable {
 
         @Override
         public JavaType typeFromId(final String id) {
+            return typeFromId(null, id);
+        }
+
+        @Override
+        public JavaType typeFromId(final DatabindContext ctx, final String id) {
             final Action action = Action.valueOf(id);
             switch (action) {
                 case none:
